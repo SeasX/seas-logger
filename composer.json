@@ -7,7 +7,7 @@
     "psr-3"
   ],
   "type": "library",
-  "license": "PHP",
+  "license": "MIT",
   "authors": [
     {
       "name": "SeasX",
