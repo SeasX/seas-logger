@@ -1,5 +1,5 @@
 {
-  "name": "seasx/seaslogger",
+  "name": "seasx/seas-logger",
   "description": "An effective,fast,stable log package for PHP",
   "keywords": [
     "log",
@@ -17,19 +17,19 @@
   "require": {
     "php": "^7.0",
     "psr/log": "^1.0.2",
-    "ext-SeasLog": "^1.8"
+    "ext-SeasLog": "^1.7"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.5"
   },
   "autoload": {
     "psr-4": {
-      "SeasX\\Seaslogger\\": "src"
+      "Seasx\\SeasLogger\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "SeasX\\Seaslogger\\Tests\\": "tests"
+      "Seasx\\SeasLogger\\Tests\\": "tests/"
     }
   },
   "scripts": {
