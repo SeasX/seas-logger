@@ -90,5 +90,12 @@ class Logger implements LoggerInterface
         SeasLog::log($level, $message, $context);
     }
 
+    /**
+     * @param string $basePath
+     */
+    public function setBasePath(string $basePath)
+    {
+        SeasLog::setBasePath($basePath);
+    }
 
 }

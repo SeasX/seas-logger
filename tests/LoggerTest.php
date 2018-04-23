@@ -10,7 +10,9 @@ class LoggerTest extends TestCase
      * @return Logger
      */
     public function init () {
-        return new Logger();
+        $logger = new Logger();
+        $logger->setBasePath('/tmp/seaslogger');
+        return $logger;
     }
 
     public function testEmergency() {
