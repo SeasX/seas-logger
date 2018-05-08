@@ -28,6 +28,25 @@ $logger = new SeasLogger();
 $logger->warning('Hello');
 $logger->error('SeasLogger');
 ```
+### configuration for laravel/lumen >=5.6
+add seaslog configuration in config/logging.php
+```php
+'channels' => [
+    ...
+    'seaslog' => [
+        'driver' => 'custom',
+        'via' => \Seasx\SeasLogger\Logger::class,
+        'path' => '/path/to/logfile',
+    ],
+    ...
+]
+```
+
+edit .env file to use seaslog
+```php
+LOG_CHANNEL=seaslog
+```
 
 ### See more
 [https://github.com/SeasX/SeasLog](https://github.com/SeasX/SeasLog)
+

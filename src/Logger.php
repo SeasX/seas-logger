@@ -308,4 +308,20 @@ class Logger implements LoggerInterface
         return SeasLog::flushBuffer();
     }
 
+    /**
+     * Create a custom SeasLog instance.
+     *
+     * @param  array  $config
+     * @return \SeasLog\Logger
+     */
+    public function __invoke(array $config)
+    {
+        $logger = new Logger();
+        if (!empty($config['path'])) {
+            $logger->setBasePath($config['path']);
+        }
+
+        return $logger;
+    }
 }
+
