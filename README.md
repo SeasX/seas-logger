@@ -20,9 +20,9 @@ $ composer require seasx/seas-logger
 ```php
 <?php
 
-use SeasX\SeasLogger;
+use Seasx\SeasLogger\Logger;
 
-$logger = new SeasLogger();
+$logger = new Logger();
 
 // add records to the log
 $logger->warning('Hello');
