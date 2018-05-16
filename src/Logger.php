@@ -10,6 +10,11 @@ class Logger implements LoggerInterface
 {
 
     /**
+     * All level
+     */
+    const ALL = -2147483647;
+
+    /**
      * Detailed debug information
      */
     const DEBUG = 100;
@@ -60,6 +65,11 @@ class Logger implements LoggerInterface
     const EMERGENCY = 600;
 
     /**
+     * request Level limit
+     */
+    static $RequestLevel =  self::ALL;
+
+    /**
      * Monolog API version
      *
      * This is only bumped when API breaks are done and should
@@ -86,6 +96,14 @@ class Logger implements LoggerInterface
         self::ALERT => 'ALERT',
         self::EMERGENCY => 'EMERGENCY',
     ];
+
+    /**
+     * set request level for seaslog
+     * @param int $level
+     */
+    public function setRequestLevel( $level = self::ALL ) {
+        self::$RequestLevel = $level;
+    }
 
     /**
      * @param string $message
@@ -166,7 +184,36 @@ class Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = array())
     {
-        SeasLog::log($level, $message, $context);
+        if ( ( int ) $level < self::$RequestLevel ) return ;
+
+        switch($level){
+            case self::EMERGENCY:
+                SeasLog::emergency($message, $context);
+                break;
+            case self::ALERT:
+                SeasLog::alert($message, $context);
+                break;
+            case self::CRITICAL:
+                SeasLog::critical($message, $context);
+                break;
+            case self::ERROR:
+                SeasLog::error($message, $context);
+                break;
+            case self::WARNING:
+                SeasLog::warning($message, $context);
+                break;
+            case self::NOTICE:
+                SeasLog::notice($message, $context);
+                break;
+            case self::INFO:
+                SeasLog::info($message, $context);
+                break;
+            case self::DEBUG:
+                SeasLog::debug($message, $context);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
