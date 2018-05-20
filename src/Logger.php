@@ -380,7 +380,7 @@ class Logger implements LoggerInterface
      *
      * @param array $config
      *
-     * @return \SeasLog\Logger
+     * @return Logger
      */
     public function __invoke(array $config)
     {
