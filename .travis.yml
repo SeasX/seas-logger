@@ -11,9 +11,11 @@ before_script:
   - composer install --prefer-source --no-interaction --dev
 
 after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
-
-script: ./vendor/bin/phpunit --verbose
+script: ./vendor/bin/phpunit --coverage-clover=coverage.clover
 
 matrix:
   fast_finish: true
+
