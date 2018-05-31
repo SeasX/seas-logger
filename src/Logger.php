@@ -76,15 +76,6 @@ class Logger implements LoggerInterface
      */
     public static $RequestLevel = self::ALL;
 
-    /**
-     * Monolog API version.
-     *
-     * This is only bumped when API breaks are done and should
-     * follow the major version of the library
-     *
-     * @var int
-     */
-    const API = 2;
 
     /**
      * Logging levels from syslog protocol defined in RFC 5424.
