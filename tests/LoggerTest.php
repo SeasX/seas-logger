@@ -26,6 +26,30 @@ class LoggerTest extends TestCase
         return $logger;
     }
 
+    public function testGetBasePath()
+    {
+        $logger = $this->init();
+
+        $basePath = $logger->getBasePath();
+        $this->assertEquals('/tmp/seaslogger', $basePath);
+    }
+
+    public function testSetRequestID()
+    {
+        $logger = $this->init();
+        $result = $logger::setRequestID(1024);
+        $this->assertTrue($result);
+    }
+
+    public function testGetRequestID()
+    {
+        $logger = $this->init();
+        $result = $logger::setRequestID(1024);
+        $this->assertTrue($result);
+        $requestID = $logger::getRequestID();
+        $this->assertEquals(1024, $requestID);
+    }
+
     public function testEmergency()
     {
         $logger = $this->init();
@@ -51,7 +75,7 @@ class LoggerTest extends TestCase
     {
         $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
-        $logger->critical('[SeasLog Test]', ['level' => 'error']);
+        $logger->error('[SeasLog Test]', ['level' => 'error']);
     }
 
     public function testWarning()
@@ -101,5 +125,76 @@ class LoggerTest extends TestCase
         $logger->log(Logger::CRITICAL, '[SeasLog Test]', ['level' => 'CRITICAL']);
         $logger->log(Logger::EMERGENCY, '[SeasLog Test]', ['level' => 'EMERGENCY']);
         $logger->log(Logger::NOTICE, '[SeasLog Test]', ['level' => 'NOTICE']);
+        $logger->log(Logger::ALERT, '[SeasLog Test]', ['level' => 'ALERT']);
+    }
+
+    public function testSetLogger()
+    {
+        $logger = $this->init();
+        $result = $logger::setLogger('seas');
+        $this->assertTrue($result);
+    }
+
+    public function testGetLastLogger()
+    {
+        $logger = $this->init();
+        $result = $logger::setLogger('seas');
+        $this->assertTrue($result);
+        $model = $logger::getLastLogger();
+        $this->assertEquals('seas', $model);
+    }
+
+    public function testSetDatetimeFormat()
+    {
+        $logger = $this->init();
+        $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
+        $this->assertTrue($result);
+    }
+
+    public function testGetDatetimeFormat()
+    {
+        $logger = $this->init();
+        $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
+        $this->assertTrue($result);
+        $format = $logger::getDatetimeFormat();
+        $this->assertEquals('Y-m-d H:i:s', $format);
+    }
+
+    public function testAnalyzerCount()
+    {
+        $logger = $this->init();
+        $result = $logger::analyzerCount();
+        $this->assertNotNull($result);
+    }
+
+    public function testAnalyzerDetail()
+    {
+        $logger = $this->init();
+        $result = $logger::analyzerDetail();
+        $this->assertNotNull($result);
+    }
+
+    public function testGetBuffer()
+    {
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $logger->info('[SeasLog Test]', ['level' => 'info']);
+        $buffer = $logger::getBuffer();
+        $this->assertNull($buffer);
+    }
+
+    public function testFlushBuffer()
+    {
+        $logger = $this->init();
+        $result = $logger::flushBuffer();
+        $this->assertTrue($result);
+    }
+
+
+    public function testInvoke()
+    {
+        $logger = $this->init();
+        $seasLogger = $logger(['path' => '/tmp/logger']);
+        $this->assertInstanceOf(Logger::class, $seasLogger);
     }
 }
