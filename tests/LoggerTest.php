@@ -117,7 +117,7 @@ class LoggerTest extends TestCase
     {
         $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
-        $logger->setRequestLevel(Logger::ERROR);
+        $logger->setRequestLevel(Logger::ALL);
         $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'DEBUG']);
         $logger->log(Logger::WARNING, '[SeasLog Test]', ['level' => 'WARNING']);
         $logger->log(Logger::ERROR, '[SeasLog Test]', ['level' => 'ERROR']);
@@ -126,6 +126,9 @@ class LoggerTest extends TestCase
         $logger->log(Logger::EMERGENCY, '[SeasLog Test]', ['level' => 'EMERGENCY']);
         $logger->log(Logger::NOTICE, '[SeasLog Test]', ['level' => 'NOTICE']);
         $logger->log(Logger::ALERT, '[SeasLog Test]', ['level' => 'ALERT']);
+
+        $logger->log(0, '[SeasLog Test]', ['level' => 'default']);
+        $logger->log(Logger::ALL - 1, '[SeasLog Test]', ['level' => 'default']);
     }
 
     public function testSetLogger()
