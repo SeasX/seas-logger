@@ -188,34 +188,13 @@ class Logger implements LoggerInterface
             return;
         }
 
-        switch ($level) {
-            case self::EMERGENCY:
-                SeasLog::emergency($message, $context);
-                break;
-            case self::ALERT:
-                SeasLog::alert($message, $context);
-                break;
-            case self::CRITICAL:
-                SeasLog::critical($message, $context);
-                break;
-            case self::ERROR:
-                SeasLog::error($message, $context);
-                break;
-            case self::WARNING:
-                SeasLog::warning($message, $context);
-                break;
-            case self::NOTICE:
-                SeasLog::notice($message, $context);
-                break;
-            case self::INFO:
-                SeasLog::info($message, $context);
-                break;
-            case self::DEBUG:
-                SeasLog::debug($message, $context);
-                break;
-            default:
-                break;
+        if (!array_key_exists($level, self::$levels)) {
+            return;
         }
+
+        $levelFunction = strtolower(self::$levels[$level]);
+
+        SeasLog::$levelFunction($message, $context);
     }
 
     /**
