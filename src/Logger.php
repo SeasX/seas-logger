@@ -109,7 +109,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function emergency($message, array $context = [])
+    public function emergency($message, $context = [])
     {
         SeasLog::emergency($message, $context);
     }
@@ -118,7 +118,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function alert($message, array $context = [])
+    public function alert($message, $context = [])
     {
         SeasLog::alert($message, $context);
     }
@@ -127,7 +127,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function critical($message, array $context = [])
+    public function critical($message, $context = [])
     {
         SeasLog::critical($message, $context);
     }
@@ -136,7 +136,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function error($message, array $context = [])
+    public function error($message, $context = [])
     {
         SeasLog::error($message, $context);
     }
@@ -145,7 +145,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function warning($message, array $context = [])
+    public function warning($message, $context = [])
     {
         SeasLog::warning($message, $context);
     }
@@ -154,7 +154,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function notice($message, array $context = [])
+    public function notice($message, $context = [])
     {
         SeasLog::notice($message, $context);
     }
@@ -163,7 +163,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function info($message, array $context = [])
+    public function info($message, $context = [])
     {
         SeasLog::info($message, $context);
     }
@@ -172,7 +172,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function debug($message, array $context = [])
+    public function debug($message, $context = [])
     {
         SeasLog::debug($message, $context);
     }
@@ -182,7 +182,7 @@ class Logger implements LoggerInterface
      * @param string $message
      * @param array  $context
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, $context = [])
     {
         if ((int) $level < self::$RequestLevel) {
             return;
@@ -202,7 +202,7 @@ class Logger implements LoggerInterface
      *
      * @return bool
      */
-    public function setBasePath(string $basePath)
+    public function setBasePath($basePath)
     {
         return SeasLog::setBasePath($basePath);
     }
@@ -352,7 +352,7 @@ class Logger implements LoggerInterface
      *
      * @return Logger
      */
-    public function __invoke(array $config)
+    public function __invoke($config)
     {
         $logger = new Logger();
         if (!empty($config['path'])) {
