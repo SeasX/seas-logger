@@ -183,7 +183,7 @@ class LoggerTest extends TestCase
         $this->assertInstanceOf(Logger::class, $logger);
         $logger->info('[SeasLog Test]', ['level' => 'info']);
         $buffer = $logger::getBuffer();
-        $this->assertNull($buffer);
+        $this->assertNotNull($buffer);
     }
 
     public function testFlushBuffer()
@@ -201,10 +201,10 @@ class LoggerTest extends TestCase
         $this->assertInstanceOf(Logger::class, $seasLogger);
     }
 
-    public function testCloseLoggerStream()
+    public function testCloseLoggerStreamAll()
     {
         $logger = new Logger();
-        $logger->setBasePath('/tmp/pandaLogger');
+        $logger->setBasePath('/tmp/allLogger');
         $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'DEBUG']);
         $logger->log(Logger::WARNING, '[SeasLog Test]', ['level' => 'WARNING']);
         $logger->log(Logger::ERROR, '[SeasLog Test]', ['level' => 'ERROR']);
@@ -218,6 +218,24 @@ class LoggerTest extends TestCase
         $logger->log(Logger::ALL - 1, '[SeasLog Test]', ['level' => 'default']);
 
         $this->assertTrue($logger::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL));
-        $this->assertTrue($logger::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, 'logger_name'));
+    }
+
+    public function testCloseLoggerStream()
+    {
+        $logger = new Logger();
+        $logger->setBasePath('/tmp/PandaLogger');
+        $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'DEBUG']);
+        $logger->log(Logger::WARNING, '[SeasLog Test]', ['level' => 'WARNING']);
+        $logger->log(Logger::ERROR, '[SeasLog Test]', ['level' => 'ERROR']);
+        $logger->log(Logger::INFO, '[SeasLog Test]', ['level' => 'INFO']);
+        $logger->log(Logger::CRITICAL, '[SeasLog Test]', ['level' => 'CRITICAL']);
+        $logger->log(Logger::EMERGENCY, '[SeasLog Test]', ['level' => 'EMERGENCY']);
+        $logger->log(Logger::NOTICE, '[SeasLog Test]', ['level' => 'NOTICE']);
+        $logger->log(Logger::ALERT, '[SeasLog Test]', ['level' => 'ALERT']);
+
+        $logger->log(0, '[SeasLog Test]', ['level' => 'default']);
+        $logger->log(Logger::ALL - 1, '[SeasLog Test]', ['level' => 'default']);
+
+        $this->assertTrue($logger::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, '/tmp/PandaLogger'));
     }
 }
