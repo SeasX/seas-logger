@@ -203,7 +203,7 @@ class LoggerTest extends TestCase
 
     public function testCloseLoggerStream()
     {
-        $logger = $this->init();
+        $logger = new Logger();
         $logger->setBasePath('/tmp/pandaLogger');
         $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'DEBUG']);
         $logger->log(Logger::WARNING, '[SeasLog Test]', ['level' => 'WARNING']);
