@@ -107,7 +107,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function emergency($message, array $context = [])
     {
@@ -116,7 +116,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function alert($message, array $context = [])
     {
@@ -125,7 +125,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function critical($message, array $context = [])
     {
@@ -134,7 +134,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function error($message, array $context = [])
     {
@@ -143,7 +143,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function warning($message, array $context = [])
     {
@@ -152,7 +152,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function notice($message, array $context = [])
     {
@@ -161,7 +161,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function info($message, array $context = [])
     {
@@ -170,7 +170,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function debug($message, array $context = [])
     {
@@ -178,13 +178,13 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * @param mixed  $level
+     * @param mixed $level
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function log($level, $message, array $context = [])
     {
-        if ((int) $level < self::$RequestLevel) {
+        if ((int)$level < self::$RequestLevel) {
             return;
         }
 
@@ -286,7 +286,7 @@ class Logger implements LoggerInterface
      *
      * @param string $level
      * @param string $log_path
-     * @param null   $key_word
+     * @param null $key_word
      *
      * @return array
      */
@@ -300,9 +300,9 @@ class Logger implements LoggerInterface
      *
      * @param        $level
      * @param string $log_path
-     * @param null   $key_word
-     * @param int    $start
-     * @param int    $limit
+     * @param null $key_word
+     * @param int $start
+     * @param int $limit
      * @param        $order    默认为正序 SEASLOG_DETAIL_ORDER_ASC，可选倒序 SEASLOG_DETAIL_ORDER_DESC
      *
      * @return array
@@ -360,5 +360,22 @@ class Logger implements LoggerInterface
         }
 
         return $logger;
+    }
+
+    /**
+     * Manually release stream flow from logger
+     *
+     * @param $type
+     * @param string $name
+     * @return bool
+     */
+    public static function closeLoggerStream($type = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, $name = '')
+    {
+        if (empty($name)) {
+            return SeasLog::closeLoggerStream($type);
+        }
+
+        return SeasLog::closeLoggerStream($type, $name);
+
     }
 }
