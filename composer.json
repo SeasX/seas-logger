@@ -17,7 +17,7 @@
   "require": {
     "php": "^7.0",
     "psr/log": "^1.0.2",
-    "ext-SeasLog": "^1.7",
+    "ext-SeasLog": "^2.0",
     "friendsofphp/php-cs-fixer": "^2.11"
   },
   "require-dev": {
