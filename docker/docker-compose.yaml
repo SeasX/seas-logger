@@ -1,0 +1,93 @@
+# Use root/example as user/password credentials
+version: '3'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    restart: unless-stopped
+    ports:
+      - 9092:9092
+      - 5555:5555
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: "5555"
+    depends_on:
+      - zookeeper
+    container_name: kafka
+
+  manager:
+    image: zenko/kafka-manager
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    environment: 
+      ZK_HOSTS: "zookeeper:2181"
+    depends_on:
+      - zookeeper
+      - kafka
+
+  clickhouse:
+    image: yandex/clickhouse-server
+    restart: unless-stopped
+    ports:
+      - 8123:8123
+      - 9000:9000
+      - 9009:9009
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  ckweb:
+    image: spoonest/clickhouse-tabix-web-client
+    restart: unless-stopped
+    environment:
+      CH_NAME: default
+      CH_HOST: clickhouse:8123
+    depends_on:
+      - clickhouse
+    ports:
+      - 8080:80
+
+  superset:
+    image: amancevice/superset
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - mysql
+    ports:
+      - 8088:8088
+    volumes:
+      - ./superset_config.py:/etc/superset/superset_config.py
+
+  mysql:
+    image: mysql:5
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    command: --max_connections=512 --explicit_defaults_for_timestamp=1 --sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+      --tmp_table_size=18M --thread_cache_size=8 --query_cache_size=0 --myisam_max_sort_file_size=64G
+      --myisam_sort_buffer_size=35M --key_buffer_size=25M --read_buffer_size=64K --read_rnd_buffer_size=256K --sort_buffer_size=256K
+      --max_allowed_packet=128M --innodb_flush_log_at_trx_commit=1 --innodb_log_buffer_size=1M
+      --innodb_buffer_pool_size=47M --innodb_log_file_size=24M --innodb_thread_concurrency=8 --default-time-zone="+8:00"
+    ports:
+      - 3306:3306
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+
