@@ -17,6 +17,7 @@
     "require": {
         "php": "^7.1",
         "psr/log": "^1.0.2",
+        "ext-seaslog": "^2.0",
         "lcobucci/clock": "^1.0",
         "friendsofphp/php-cs-fixer": "^2.11"
     },
