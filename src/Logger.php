@@ -203,7 +203,7 @@ class Logger implements LoggerInterface
         if (static::$config instanceof LoggerConfig) {
             throw new NotSupportedException("LoggerConfig not support analyzerCount");
         }
-        return SeasLog::analyzerCount($level, $log_path, $key_word);
+        return SeasLog::analyzerCount($level, $log_path, (string)$key_word);
     }
 
     /**
@@ -232,7 +232,7 @@ class Logger implements LoggerInterface
         return SeasLog::analyzerDetail(
             $level,
             $log_path,
-            $key_word,
+            (string)$key_word,
             $start,
             $limit,
             $order
