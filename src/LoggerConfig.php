@@ -139,8 +139,7 @@ class LoggerConfig extends AbstractConfig
                     $msg[] = ArrayHelper::getValue($template, $tmp, uniqid());
                     break;
                 case '%H':
-                    $msg[] = ArrayHelper::getValue($template, $tmp,
-                        isset($_SERVER['HOSTNAME']) ? $_SERVER['HOSTNAME'] : 'local');
+                    $msg[] = ArrayHelper::getValue($template, $tmp, $_SERVER['HOSTNAME']);
                     break;
                 case '%P':
                     $msg[] = ArrayHelper::getValue($template, $tmp, getmypid());
@@ -149,14 +148,14 @@ class LoggerConfig extends AbstractConfig
                     $msg[] = ArrayHelper::getValue($template, $tmp, 'cli');
                     break;
                 case '%R':
-                    $msg[] = ArrayHelper::getValue($template, $tmp,
-                        isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '/');
+                    $msg[] = ArrayHelper::getValue($template, $tmp, $_SERVER['SCRIPT_NAME']);
                     break;
                 case '%m':
-                    $msg[] = strtoupper(ArrayHelper::getValue($template, $tmp, 'unknow'));
+                    $method = ArrayHelper::getValue($template, $tmp);
+                    $msg[] = $method ? strtoupper($method) : $_SERVER['SHELL'];
                     break;
                 case '%I':
-                    $msg[] = ArrayHelper::getValue($template, $tmp, '127.0.0.1');
+                    $msg[] = ArrayHelper::getValue($template, $tmp, 'local');
                     break;
                 case '%F':
                 case '%C':
