@@ -17,6 +17,7 @@ services:
       - 5555:5555
     environment:
       KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -31,15 +32,15 @@ services:
     image: zenko/kafka-manager
     restart: unless-stopped
     ports:
-      - 9000:9000
-    environment: 
+      - 9091:9000
+    environment:
       ZK_HOSTS: "zookeeper:2181"
     depends_on:
       - zookeeper
       - kafka
 
   clickhouse:
-    image: yandex/clickhouse-server
+    image: yandex/clickhouse-server:19.13.3.26
     restart: unless-stopped
     ports:
       - 8123:8123
