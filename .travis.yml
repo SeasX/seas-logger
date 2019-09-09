@@ -26,6 +26,7 @@ before_install:
 install:
     - cd $TRAVIS_BUILD_DIR
     - bash .travis/swoole.install.sh
+    - bash .travis/seaslog.install.sh
     - phpenv config-rm xdebug.ini || echo "xdebug not available"
     - phpenv config-add .travis/ci.ini
 
