@@ -30,10 +30,12 @@ class SwooleLoggerTest extends TestCase
         return $logger;
     }
 
+    /**
+     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
+     */
     public function testGetBasePath()
     {
         $logger = $this->init();
-        $this->expectException(NotSupportedException::class);
         $logger->getBasePath();
 
 //        $logger = $this->init(1);
