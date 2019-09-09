@@ -4,6 +4,8 @@ sudo: required
 
 matrix:
     include:
+        - php: 7.1
+          env: SW_VERSION="4.4.5";SL_VERSION="SeasLog-2.0.2"
         - php: 7.2
           env: SW_VERSION="4.4.5";SL_VERSION="SeasLog-2.0.2"
         - php: 7.3
@@ -32,7 +34,11 @@ install:
 
 before_script:
     - cd $TRAVIS_BUILD_DIR
-    - composer install
+    - composer self-update
+    - composer install --prefer-source --no-interaction --dev
 
-script:
-    - composer test
+after_script:
+    - wget https://scrutinizer-ci.com/ocular.phar
+    - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+
+script: ./vendor/bin/phpunit --coverage-clover=coverage.clover
