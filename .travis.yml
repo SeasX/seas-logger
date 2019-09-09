@@ -1,22 +1,37 @@
 language: php
 
-php:
-  - 7.1
-  - 7.2
-
-before_script:
-  - pecl install SeasLog
-  - wget https://github.com/swoole/swoole-src/archive/v4.3.3.tar.gz -O swoole.tar.gz && mkdir -p swoole && tar -xf swoole.tar.gz -C swoole --strip-components=1 && rm swoole.tar.gz && cd swoole && phpize && ./configure && make -j$(nproc) && make install && cd -
-  - echo "extension = swoole.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - composer self-update
-  - composer install --prefer-source --no-interaction --dev
-
-after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
-
-script: ./vendor/bin/phpunit --coverage-clover=coverage.clover
+sudo: required
 
 matrix:
-  fast_finish: true
+    include:
+        - php: 7.2
+          env: SW_VERSION="4.4.5";SL_VERSION="SeasLog-2.0.2"
+        - php: 7.3
+          env: SW_VERSION="4.4.5";SL_VERSION="SeasLog-2.0.2"
+        - php: master
+          env: SW_VERSION="4.4.5";SL_VERSION="SeasLog-2.0.2"
 
+    allow_failures:
+        - php: master
+
+services:
+    - mysql
+
+before_install:
+    - export PHP_MAJOR="$(`phpenv which php` -r 'echo phpversion();' | cut -d '.' -f 1)"
+    - export PHP_MINOR="$(`phpenv which php` -r 'echo phpversion();' | cut -d '.' -f 2)"
+    - echo $PHP_MAJOR
+    - echo $PHP_MINOR
+
+install:
+    - cd $TRAVIS_BUILD_DIR
+    - bash .travis/swoole.install.sh
+    - phpenv config-rm xdebug.ini || echo "xdebug not available"
+    - phpenv config-add .travis/ci.ini
+
+before_script:
+    - cd $TRAVIS_BUILD_DIR
+    - composer install
+
+script:
+    - composer test
