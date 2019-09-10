@@ -193,7 +193,15 @@ class SwooleLoggerTest extends TestCase
     public function testLogWithFieldTemplate()
     {
         \Co\run(function () {
-            $logger = $this->init();
+            $logger = new Logger(
+                new LoggerConfig([
+                    'echo' => new StyleTarget()
+                ], [
+                    'appName' => 'Seaslog',
+                    'bufferSize' => 1,
+                    'tick' => 0,
+                    'recall_depth' => 2,
+                ]));
             $this->assertInstanceOf(Logger::class, $logger);
             $logger->log(Logger::INFO, '[LoggerConfig FieldTemplate]', ['level' => 'log', 'template' => ['test']]);
 
