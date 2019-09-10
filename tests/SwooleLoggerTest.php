@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Seasx\SeasLogger\Tests;
 
 use Seasx\SeasLogger\AbstractConfig;
-use Seasx\SeasLogger\Exceptions\NotSupportedException;
 use Seasx\SeasLogger\Logger;
 use Seasx\SeasLogger\LoggerConfig;
 use Seasx\SeasLogger\SeaslogConfig;
@@ -12,6 +11,18 @@ use Seasx\SeasLogger\Targets\StyleTarget;
 
 class SwooleLoggerTest extends TestCase
 {
+    public function testGetLogger()
+    {
+        $logger = new Logger();
+        $this->assertEmpty($logger->getConfig());
+
+        $logger = $this->init();
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+
+        $logger = $this->init(1);
+        $this->assertInstanceOf(SeaslogConfig::class, $logger->getConfig());
+    }
+
     /**
      * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
      */
@@ -20,10 +31,10 @@ class SwooleLoggerTest extends TestCase
         $logger = $this->init();
         $logger->getBasePath();
 
-//        $logger = $this->init(1);
-//        $logger->setBasePath('/tmp/seaslogger');
-//        $basePath = $logger->getBasePath();
-//        $this->assertEquals('/tmp/seaslogger', $basePath);
+        $logger = $this->init(1);
+        $logger->setBasePath('/tmp/seaslogger');
+        $basePath = $logger->getBasePath();
+        $this->assertEquals('/tmp/seaslogger', $basePath);
     }
 
     /**
@@ -53,9 +64,9 @@ class SwooleLoggerTest extends TestCase
         $logger = $this->init();
         $logger::setRequestID(1024);
 
-//        $logger = $this->init(1);
-//        $result = $logger::setRequestID(1024);
-//        $this->assertTrue($result);
+        $logger = $this->init(1);
+        $result = $logger::setRequestID(1024);
+        $this->assertTrue($result);
     }
 
     /**
@@ -66,11 +77,11 @@ class SwooleLoggerTest extends TestCase
         $logger = $this->init();
         $logger::getRequestID();
 
-//        $logger = $this->init(1);
-//        $result = $logger::setRequestID(1024);
-//        $this->assertTrue($result);
-//        $requestID = $logger::getRequestID();
-//        $this->assertEquals(1024, $requestID);
+        $logger = $this->init(1);
+        $result = $logger::setRequestID(1024);
+        $this->assertTrue($result);
+        $requestID = $logger::getRequestID();
+        $this->assertEquals(1024, $requestID);
     }
 
     public function testEmergency()
@@ -78,6 +89,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->emergency('[LoggerConfig Test]', ['level' => 'emergency']);
 
 //            $logger = $this->init(1);
@@ -91,6 +103,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->alert('[LoggerConfig Test]', ['level' => 'alert']);
 
 //            $logger = $this->init(1);
@@ -104,6 +117,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->critical('[LoggerConfig Test]', ['level' => 'critical']);
 
 //            $logger = $this->init(1);
@@ -117,6 +131,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->error('[LoggerConfig Test]', ['level' => 'error']);
 
 //            $logger = $this->init(1);
@@ -130,6 +145,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->warning('[LoggerConfig Test]', ['level' => 'warning']);
 
 //            $logger = $this->init(1);
@@ -143,6 +159,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->notice('[LoggerConfig Test]', ['level' => 'notice']);
 
 //            $logger = $this->init(1);
@@ -156,6 +173,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->info('[LoggerConfig Test]', ['level' => 'info']);
 
 //            $logger = $this->init(1);
@@ -169,6 +187,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->debug('[LoggerConfig Test]', ['level' => 'debug']);
 
 //            $logger = $this->init(1);
@@ -182,6 +201,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->log(Logger::DEBUG, '[LoggerConfig Test]', ['level' => 'log']);
 
 //            $logger = $this->init(1);
@@ -203,6 +223,7 @@ class SwooleLoggerTest extends TestCase
                     'recall_depth' => 2,
                 ]));
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->log(Logger::INFO, '[LoggerConfig FieldTemplate]', ['level' => 'log', 'template' => ['test']]);
 
 //            $logger = $this->init(1);
@@ -225,6 +246,7 @@ class SwooleLoggerTest extends TestCase
                     'recall_depth' => 2,
                 ]));
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->log(Logger::INFO, '[LoggerConfig JsonTemplate]',
                 ['level' => 'log', 'template' => ['task_type' => 'test']]);
 
@@ -248,6 +270,7 @@ class SwooleLoggerTest extends TestCase
         \Co\run(function () {
             $logger = $this->init();
             $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
             $logger->setRequestLevel(Logger::ALL);
             $logger->log(Logger::DEBUG, '[LoggerConfig Test]', ['level' => 'DEBUG']);
             $logger->log(Logger::WARNING, '[LoggerConfig Test]', ['level' => 'WARNING']);
@@ -284,9 +307,9 @@ class SwooleLoggerTest extends TestCase
         $logger = $this->init();
         $logger::setLogger('seas');
 
-//        $logger = $this->init(1);
-//        $result = $logger::setLogger('seas');
-//        $this->assertTrue($result);
+        $logger = $this->init(1);
+        $result = $logger::setLogger('seas');
+        $this->assertTrue($result);
     }
 
     /**
@@ -297,11 +320,11 @@ class SwooleLoggerTest extends TestCase
         $logger = $this->init();
         $logger::getLastLogger();
 
-//        $logger = $this->init(1);
-//        $result = $logger::setLogger('seas');
-//        $this->assertTrue($result);
-//        $model = $logger::getLastLogger();
-//        $this->assertEquals('seas', $model);
+        $logger = $this->init(1);
+        $result = $logger::setLogger('seas');
+        $this->assertTrue($result);
+        $model = $logger::getLastLogger();
+        $this->assertEquals('seas', $model);
     }
 
     public function testSetDatetimeFormat()
@@ -309,11 +332,21 @@ class SwooleLoggerTest extends TestCase
         $logger = $this->init();
         $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
         $this->assertTrue($result);
+
+        $logger = $this->init(1);
+        $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
+        $this->assertTrue($result);
     }
 
     public function testGetDatetimeFormat()
     {
         $logger = $this->init();
+        $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
+        $this->assertTrue($result);
+        $format = $logger::getDatetimeFormat();
+        $this->assertEquals('Y-m-d H:i:s', $format);
+
+        $logger = $this->init(1);
         $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
         $this->assertTrue($result);
         $format = $logger::getDatetimeFormat();
@@ -328,9 +361,9 @@ class SwooleLoggerTest extends TestCase
         $logger = $this->init();
         $logger::analyzerCount();
 
-//        $logger = $this->init(1);
-//        $result = $logger::analyzerCount();
-//        $this->assertNotNull($result);
+        $logger = $this->init(1);
+        $result = $logger::analyzerCount();
+        $this->assertNotNull($result);
     }
 
     /**
@@ -341,24 +374,29 @@ class SwooleLoggerTest extends TestCase
         $logger = $this->init();
         $logger::analyzerDetail();
 
-//        $logger = $this->init(1);
-//        $result = $logger::analyzerDetail();
-//        $this->assertNotNull($result);
+        $logger = $this->init(1);
+        $result = $logger::analyzerDetail();
+        $this->assertNotNull($result);
     }
 
     public function testGetBuffer()
     {
-        $logger = $this->init();
-        $this->assertInstanceOf(Logger::class, $logger);
-        $logger->info('[SeasLog Test]', ['level' => 'info']);
-        $buffer = $logger::getBuffer();
-        $this->assertNotNull($buffer);
+        \Co\run(function (){
+            $logger = $this->init();
+            $this->assertInstanceOf(Logger::class, $logger);
+            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+            $logger->info('[LoggerConfig Test]', ['level' => 'info']);
+            $buffer = $logger::getBuffer();
+            $this->assertNotNull($buffer);
 
-//        $logger = $this->init(1);
-//        $this->assertInstanceOf(Logger::class, $logger);
-//        $logger->info('[SeasLog Test]', ['level' => 'info']);
-//        $buffer = $logger::getBuffer();
-//        $this->assertNotNull($buffer);
+//            $logger = $this->init(1);
+//            $this->assertInstanceOf(Logger::class, $logger);
+//            $logger->info('[SeasLog Test]', ['level' => 'info']);
+//            $buffer = $logger::getBuffer();
+//            $this->assertNotNull($buffer);
+        });
+
+
     }
 
     /**
@@ -381,9 +419,9 @@ class SwooleLoggerTest extends TestCase
         $seasLogger = $logger(['path' => '/tmp/logger']);
         $this->assertInstanceOf(Logger::class, $seasLogger);
 
-//        $logger = $this->init(1);
-//        $seasLogger = $logger(['path' => '/tmp/logger']);
-//        $this->assertInstanceOf(Logger::class, $seasLogger);
+        $logger = $this->init(1);
+        $seasLogger = $logger(['path' => '/tmp/logger']);
+        $this->assertInstanceOf(Logger::class, $seasLogger);
     }
 
 //    public function testCloseLoggerStreamAll()

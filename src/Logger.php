@@ -106,6 +106,24 @@ class Logger implements LoggerInterface
     }
 
     /**
+     * @return AbstractConfig|null
+     */
+    public function getConfig(): ?AbstractConfig
+    {
+        return self::$config;
+    }
+
+    /**
+     * @param AbstractConfig $config
+     * @return Logger
+     */
+    public function setConfig(AbstractConfig $config): self
+    {
+        self::$config = $config;
+        return $this;
+    }
+
+    /**
      * 设置本次请求标识.
      *
      * @param string
@@ -283,14 +301,6 @@ class Logger implements LoggerInterface
 
         return SeasLog::closeLoggerStream($type, $name);
 
-    }
-
-    /**
-     * @return AbstractConfig
-     */
-    public function getConfig(): ?AbstractConfig
-    {
-        return self::$config;
     }
 
     /**

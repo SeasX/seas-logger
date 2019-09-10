@@ -33,7 +33,7 @@ class SeaslogConfig extends AbstractConfig
     public function log(string $level, string $message, array $context = []): void
     {
         $template = $this->getTemplate();
-        $module = ArrayHelper::remove($context, 'module', 'System');
+        $module = ArrayHelper::remove($context, 'module');
         if ($module !== null) {
             Seaslog::setLogger($this->appName . '_' . $module);
         }
@@ -67,16 +67,19 @@ class SeaslogConfig extends AbstractConfig
      */
     public function flush(bool $flush = false): void
     {
-        $total = Seaslog::getBufferCount();
-        if ($flush || $total >= $this->bufferSize) {
-            $buffer = Seaslog::getBuffer();
-            Seaslog::flushBuffer(0);
-            foreach ($this->targetList as $index => $target) {
-                rgo(function () use ($target, $buffer, $flush) {
-                    $target->export($buffer);
-                });
+        if (method_exists('Seaslog', 'getBufferCount')) {
+            $total = Seaslog::getBufferCount();
+            if (($flush || $total >= $this->bufferSize) && ($buffer = Seaslog::getBuffer()) !== false) {
+                Seaslog::flushBuffer(0);
+                foreach ($this->targetList as $index => $target) {
+                    rgo(function () use ($target, $buffer, $flush) {
+                        $target->export($buffer);
+                    });
+                }
+                unset($buffer);
             }
-            unset($buffer);
+        } else {
+            Seaslog::flushBuffer();
         }
     }
 }
