@@ -91,7 +91,7 @@ class Logger implements LoggerInterface
         self::EMERGENCY => 'EMERGENCY',
     ];
     /** @var AbstractConfig */
-    private static $config;
+    protected static $config;
 
     /**
      * Logger constructor.
@@ -102,7 +102,7 @@ class Logger implements LoggerInterface
         if ($config !== null && !extension_loaded('swoole')) {
             throw new NotSupportedException("This usage must have swoole version>=4");
         }
-        static::$config = $config;
+        self::$config = $config;
     }
 
     /**
@@ -114,7 +114,7 @@ class Logger implements LoggerInterface
      */
     public static function setRequestID($request_id)
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException("LoggerConfig not support setRequestID");
         }
         return SeasLog::setRequestID($request_id);
@@ -127,7 +127,7 @@ class Logger implements LoggerInterface
      */
     public static function getRequestID()
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException("LoggerConfig not support getRequestID");
         }
         return SeasLog::getRequestID();
@@ -142,7 +142,7 @@ class Logger implements LoggerInterface
      */
     public static function setLogger($module)
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException("LoggerConfig not support setLogger");
         }
         return SeasLog::setLogger($module);
@@ -155,7 +155,7 @@ class Logger implements LoggerInterface
      */
     public static function getLastLogger()
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException("LoggerConfig not support getLastLogger");
         }
         return SeasLog::getLastLogger();
@@ -170,7 +170,7 @@ class Logger implements LoggerInterface
      */
     public static function setDatetimeFormat($format)
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             LoggerConfig::setDatetimeFormat($format);
         }
         return SeasLog::setDatetimeFormat($format);
@@ -183,7 +183,7 @@ class Logger implements LoggerInterface
      */
     public static function getDatetimeFormat()
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             return LoggerConfig::getDatetimeFormat();
         }
         return SeasLog::getDatetimeFormat();
@@ -200,7 +200,7 @@ class Logger implements LoggerInterface
      */
     public static function analyzerCount($level = 'all', $log_path = '*', $key_word = null)
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException("LoggerConfig not support analyzerCount");
         }
         return SeasLog::analyzerCount($level, $log_path, (string)$key_word);
@@ -226,7 +226,7 @@ class Logger implements LoggerInterface
         $limit = 20,
         $order = SEASLOG_DETAIL_ORDER_ASC
     ) {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException("LoggerConfig not support analyzerDetail");
         }
         return SeasLog::analyzerDetail(
@@ -246,7 +246,7 @@ class Logger implements LoggerInterface
      */
     public static function getBuffer()
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             return LoggerConfig::getBuffer();
         }
         return SeasLog::getBuffer();
@@ -259,7 +259,7 @@ class Logger implements LoggerInterface
      */
     public static function flushBuffer()
     {
-        if (static::$config) {
+        if (self::$config) {
             throw new NotSupportedException("This ENV not support flushBuffer");
         }
         return SeasLog::flushBuffer();
@@ -274,7 +274,7 @@ class Logger implements LoggerInterface
      */
     public static function closeLoggerStream($type = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, $name = '')
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException("LoggerConfig not support closeLoggerStream");
         }
         if (empty($name)) {
@@ -290,7 +290,7 @@ class Logger implements LoggerInterface
      */
     public function getConfig(): ?AbstractConfig
     {
-        return static::$config;
+        return self::$config;
     }
 
     /**
@@ -313,7 +313,7 @@ class Logger implements LoggerInterface
      */
     public function emergency($message, array $context = array())
     {
-        empty(static::$config) ? SeasLog::emergency($message, $context) : $this->log(self::EMERGENCY, $message,
+        empty(self::$config) ? SeasLog::emergency($message, $context) : $this->log(self::EMERGENCY, $message,
             $context);
     }
 
@@ -336,15 +336,15 @@ class Logger implements LoggerInterface
             return;
         }
 
-        if (empty(static::$config)) {
+        if (empty(self::$config)) {
             $levelFunction = strtolower(self::$levels[$level]);
             SeasLog::$levelFunction($message, $context);
         } else {
             if (is_string($message)) {
-                static::$config->log(self::$levels[$level], $message, $context);
+                self::$config->log(self::$levels[$level], $message, $context);
             } elseif (is_array($message)) {
                 foreach ($message as $m) {
-                    static::$config->log(self::$levels[$level], $m, $context);
+                    self::$config->log(self::$levels[$level], $m, $context);
                 }
             }
         }
@@ -363,7 +363,7 @@ class Logger implements LoggerInterface
      */
     public function alert($message, array $context = array())
     {
-        empty(static::$config) ? SeasLog::alert($message, $context) : $this->log(self::ALERT, $message, $context);
+        empty(self::$config) ? SeasLog::alert($message, $context) : $this->log(self::ALERT, $message, $context);
     }
 
     /**
@@ -378,7 +378,7 @@ class Logger implements LoggerInterface
      */
     public function critical($message, array $context = array())
     {
-        empty(static::$config) ? SeasLog::critical($message, $context) : $this->log(self::CRITICAL, $message,
+        empty(self::$config) ? SeasLog::critical($message, $context) : $this->log(self::CRITICAL, $message,
             $context);
     }
 
@@ -393,7 +393,7 @@ class Logger implements LoggerInterface
      */
     public function error($message, array $context = array())
     {
-        empty(static::$config) ? SeasLog::error($message, $context) : $this->log(self::ERROR, $message, $context);
+        empty(self::$config) ? SeasLog::error($message, $context) : $this->log(self::ERROR, $message, $context);
     }
 
     /**
@@ -409,7 +409,7 @@ class Logger implements LoggerInterface
      */
     public function warning($message, array $context = array())
     {
-        empty(static::$config) ? SeasLog::warning($message, $context) : $this->log(self::WARNING, $message, $context);
+        empty(self::$config) ? SeasLog::warning($message, $context) : $this->log(self::WARNING, $message, $context);
     }
 
     /**
@@ -422,7 +422,7 @@ class Logger implements LoggerInterface
      */
     public function notice($message, array $context = array())
     {
-        empty(static::$config) ? SeasLog::notice($message, $context) : $this->log(self::NOTICE, $message, $context);
+        empty(self::$config) ? SeasLog::notice($message, $context) : $this->log(self::NOTICE, $message, $context);
     }
 
     /**
@@ -437,7 +437,7 @@ class Logger implements LoggerInterface
      */
     public function info($message, array $context = array())
     {
-        empty(static::$config) ? SeasLog::info($message, $context) : $this->log(self::INFO, $message, $context);
+        empty(self::$config) ? SeasLog::info($message, $context) : $this->log(self::INFO, $message, $context);
     }
 
     /**
@@ -450,7 +450,7 @@ class Logger implements LoggerInterface
      */
     public function debug($message, array $context = array())
     {
-        empty(static::$config) ? SeasLog::debug($message, $context) : $this->log(self::DEBUG, $message, $context);
+        empty(self::$config) ? SeasLog::debug($message, $context) : $this->log(self::DEBUG, $message, $context);
     }
 
     /**
@@ -458,7 +458,7 @@ class Logger implements LoggerInterface
      */
     public function getBasePath()
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException(sprintf("LoggerConfig not support %s", __METHOD__));
         }
         return SeasLog::getBasePath();
@@ -488,7 +488,7 @@ class Logger implements LoggerInterface
      */
     public function setBasePath(string $basePath)
     {
-        if (static::$config instanceof LoggerConfig) {
+        if (self::$config instanceof LoggerConfig) {
             throw new NotSupportedException(sprintf("LoggerConfig not support %s", __METHOD__));
         }
         return SeasLog::setBasePath($basePath);
