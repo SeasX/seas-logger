@@ -34,12 +34,9 @@ class LoggerConfig extends AbstractConfig
         '%F',
         '%U',
         '%u',
-        '%C'
+        '%C',
+        '%A'
     ];
-    /** @var array */
-    protected $template;
-    /** @var string */
-    protected $split = ' | ';
     /** @var int */
     protected $isMicroTime = 3;
     /** @var bool */
@@ -54,15 +51,15 @@ class LoggerConfig extends AbstractConfig
     public function __construct(
         array $target,
         array $configs = [],
-        array $template = ['%T', '%L', '%R', '%m', '%I', '%Q', '%F', '%U', '%M']
+        array $template = ['%T', '%L', '%R', '%m', '%I', '%Q', '%F', '%U', '%A', '%M']
     ) {
-        parent::__construct($target, $configs);
         foreach ($template as $tmp) {
             if (!in_array($tmp, self::$supportTemplate)) {
                 throw new InvalidArgumentException("$tmp not supported!");
             }
         }
         $this->template = $template;
+        parent::__construct($target, $configs);
     }
 
     /**
@@ -174,6 +171,19 @@ class LoggerConfig extends AbstractConfig
                     break;
                 case '%u':
                     $msg[] = memory_get_peak_usage();
+                    break;
+                case '%A':
+                    $customerTemplate = ArrayHelper::getValue($context, 'template',
+                            []) ?? ArrayHelper::getValue($template, $tmp,
+                            []);
+                    switch ($this->customerType) {
+                        case AbstractConfig::TYPE_JSON:
+                            $msg[] = json_encode($customerTemplate, JSON_UNESCAPED_UNICODE);
+                            break;
+                        case AbstractConfig::TYPE_FIELD:
+                        default:
+                            $msg[] = implode($this->split, $customerTemplate);
+                    }
                     break;
             }
         }

@@ -19,8 +19,9 @@ class SeaslogConfig extends AbstractConfig
      */
     public function __construct(array $target, array $configs = [])
     {
-        parent::__construct($target, $configs);
+        $this->template = explode($this->split, ini_get('seaslog.default_template'));
         ini_set('seaslog.recall_depth', (string)$this->recall_depth);
+        parent::__construct($target, $configs);
     }
 
     /**
@@ -44,6 +45,17 @@ class SeaslogConfig extends AbstractConfig
             SEASLOG_REQUEST_VARIABLE_CLIENT_IP => isset($template['%I']) ? $template['%I'] : null
         ]) as $key => $value) {
             Seaslog::setRequestVariable($key, $value);
+        }
+        if (!empty($template = ArrayHelper::remove($context, 'template', []) ?? ArrayHelper::remove($template, '%A',
+                []))) {
+            switch ($this->customerType) {
+                case AbstractConfig::TYPE_JSON:
+                    $template = json_encode($template, JSON_UNESCAPED_UNICODE);
+                    break;
+                case AbstractConfig::TYPE_FIELD:
+                    $template = implode($this->split, $template);
+            }
+            $message = $template . $this->split . $message;
         }
         Seaslog::$level($message);
         $this->flush();

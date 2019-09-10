@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /*
  * This file is part of the seasx/seas-logger.
  *
@@ -15,6 +15,14 @@ use Seasx\SeasLogger\Logger;
 
 class LoggerTest extends TestCase
 {
+    public function testGetBasePath()
+    {
+        $logger = $this->init();
+
+        $basePath = $logger->getBasePath();
+        $this->assertEquals('/tmp/seaslogger', $basePath);
+    }
+
     /**
      * @return Logger
      */
@@ -24,14 +32,6 @@ class LoggerTest extends TestCase
         $logger->setBasePath('/tmp/seaslogger');
 
         return $logger;
-    }
-
-    public function testGetBasePath()
-    {
-        $logger = $this->init();
-
-        $basePath = $logger->getBasePath();
-        $this->assertEquals('/tmp/seaslogger', $basePath);
     }
 
     public function testSetRequestID()

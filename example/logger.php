@@ -30,7 +30,11 @@ use Seasx\SeasLogger\Targets\StyleTarget;
                         'brokerVersion' => '1.0.0',
                     ]), new Pool([
                     'uri' => '192.168.5.134:9092'
-                ])), [], 'seaslog_test')
+                ])),
+                [],
+                'seaslog_test',
+                [['task_id', 'string'], ['worker_id', 'string']]//自定义模板添加的处理字段，顺序需要按照日志记录中的template数组一致
+            )
         ], [
             'appName' => 'Seaslog',//应用名：远程发送日志的时候用于区分是哪个应用发送来的
             'bufferSize' => 1,//定量：buffer>=时会输出，默认为1，每次记录都会输出
@@ -58,23 +62,27 @@ use Seasx\SeasLogger\Targets\StyleTarget;
                     '%c' => [
                         $possibleStyles[rand(0, count($possibleStyles) - 1)],
                         $htmlColors[rand(0, count($htmlColors) - 1)]
-                    ]
+                    ],
                 ]);
             } else {
                 $requestVar = array_filter([
                     '%Q' => uniqid(),
                     '%c' => [
-                        $possibleStyles[rand(0, count($possibleStyles) - 1)],
-                        $htmlColors[rand(0, count($htmlColors) - 1)]
+                        'console' => $possibleStyles[rand(0, count($possibleStyles) - 1)],
+                        'websocket' => $htmlColors[rand(0, count($htmlColors) - 1)]
                     ]
                 ]);
             }
+            $requestVar['%A'] = ['123', '456'];
             Context::set(Logger::CONTEXT_KEY, $requestVar);
         }
         return $requestVar;
     });
-    //这里区别于标准PSR-3，Context占用一个固定key(module)，作用与Seaslog的Logger参数一样,默认值为System
-    for ($i = 0; $i < 100; $i++) {
-        $logger->info("test logger $i", ['module' => 'logger']);
+    /*
+     * 这里区别于标准PSR-3，Context占用两个固定key(module)，作用与Seaslog的Logger参数一样,默认值为System
+     * template为用户自定义模板对应的填充值，默认为[]，不填充
+     */
+    for ($i = 0; $i < 1; $i++) {
+        $logger->info("test logger $i", ['module' => 'logger', 'template' => ['abc', 'def']]);
     }
 });

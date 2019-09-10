@@ -5,6 +5,7 @@ namespace Seasx\SeasLogger\Targets;
 
 
 use Exception;
+use Seasx\SeasLogger\AbstractConfig;
 use Seasx\SeasLogger\ArrayHelper;
 use Seasx\SeasLogger\Kafka\Producter;
 
@@ -16,23 +17,27 @@ class KafkaTarget extends AbstractTarget
 {
     /** @var Producter */
     private $client;
-    /** @var array */
-    private $template = [];
     /** @var string */
     private $topic;
+    /** @var array */
+    private $customerTmp = [];
+    /** @var array */
+    private $fieldTemplate = [];
 
     /**
      * KafkaTarget constructor.
      * @param Producter $client
-     * @param string $topic
      * @param array $levelList
-     * @param array $template
+     * @param string $topic
+     * @param array $customerTmp
+     * @param array $fieldTemplate
      */
     public function __construct(
         Producter $client,
         array $levelList = [],
         string $topic = 'seaslog',
-        array $template = [
+        array $customerTmp = [],
+        array $fieldTemplate = [
             ['datetime', 'timespan'],
             ['level', 'string'],
             ['request_uri', 'string'],
@@ -46,7 +51,8 @@ class KafkaTarget extends AbstractTarget
     ) {
         $this->client = $client;
         $this->topic = $topic;
-        $this->template = $template;
+        $this->fieldTemplate = $fieldTemplate;
+        $this->customerTmp = $customerTmp;
         $this->levelList = $levelList;
     }
 
@@ -79,20 +85,24 @@ class KafkaTarget extends AbstractTarget
                 $log = [
                     'appname' => $module,
                 ];
-                foreach ($msg as $index => $value) {
-                    [$name, $type] = $this->template[$index];
-                    switch ($type) {
-                        case "string":
-                            $log[$name] = trim($value);
-                            break;
-                        case "timespan":
-                            $log[$name] = strtotime(explode('.', $value)[0]);
-                            break;
-                        case "int":
-                            $log[$name] = (int)$value;
-                            break;
-                        default:
-                            $log[$name] = trim($value);
+                $i = 0;
+                foreach ($msg as $index => $msgValue) {
+                    if ($this->template[$index] === '%A') {
+                        switch ($this->customerType) {
+                            case AbstractConfig::TYPE_JSON:
+                                $msgValue = json_decode($msgValue, true);
+                                break;
+                            case AbstractConfig::TYPE_FIELD:
+                            default:
+                                $msgValue = explode($this->split, $msgValue);
+                        }
+                        foreach ($this->customerTmp as $tmpIndex => [$name, $type]) {
+                            $this->makeLog($log, $name, $type, isset($msgValue[$tmpIndex]) ? $msgValue[$tmpIndex] : '');
+                        }
+                    } else {
+                        [$name, $type] = $this->fieldTemplate[$i];
+                        $this->makeLog($log, $name, $type, $msgValue);
+                        $i++;
                     }
                 }
                 $this->client->send([
@@ -103,6 +113,29 @@ class KafkaTarget extends AbstractTarget
                     ]
                 ]);
             }
+        }
+    }
+
+    /**
+     * @param array $log
+     * @param string $name
+     * @param string $type
+     * @param $value
+     */
+    private function makeLog(array &$log, string $name, string $type, $value): void
+    {
+        switch ($type) {
+            case "timespan":
+                $log[$name] = $value ? strtotime(explode('.', $value)[0]) : 0;
+                break;
+            case "int":
+                $log[$name] = $value ? (int)$value : 0;
+                break;
+            case "string":
+                $log[$name] = $value ? trim($value) : '';
+                break;
+            default:
+                $log[$type][$name] = $value;
         }
     }
 }

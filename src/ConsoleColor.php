@@ -126,6 +126,15 @@ class ConsoleColor
 
     /**
      * @param string $style
+     * @return bool
+     */
+    private function isValidStyle(string $style): bool
+    {
+        return array_key_exists($style, $this->styles) || preg_match(self::COLOR256_REGEXP, $style);
+    }
+
+    /**
+     * @param string $style
      * @return string
      */
     private function styleSequence(string $style): ?string
@@ -152,15 +161,6 @@ class ConsoleColor
         } else {
             return strpos(getenv('TERM'), '256color') !== false;
         }
-    }
-
-    /**
-     * @param string $style
-     * @return bool
-     */
-    private function isValidStyle(string $style): bool
-    {
-        return array_key_exists($style, $this->styles) || preg_match(self::COLOR256_REGEXP, $style);
     }
 
     /**

@@ -167,4 +167,12 @@ class HtmlColor
     {
         return array_keys(self::$colors);
     }
+
+    /**
+     * @return array
+     */
+    public static function getPossibleColorsRGB(): array
+    {
+        return array_values(self::$colors);
+    }
 }

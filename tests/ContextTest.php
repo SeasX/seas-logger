@@ -1,16 +1,16 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Seasx\SeasLogger\Tests;
 
 
 use Seasx\SeasLogger\Context;
 
-class ContestTest extends TestCase
+class ContextTest extends TestCase
 {
     public function testGet()
     {
-        go(function () {
+        \Co\Run(function () {
             Context::set('key', 'value');
             $this->assertEquals('value', Context::get('key'));
         });
@@ -18,7 +18,7 @@ class ContestTest extends TestCase
 
     public function testHas()
     {
-        go(function () {
+        \Co\Run(function () {
             Context::set('key', 'value');
             $this->assertTrue(Context::has('key'));
         });
@@ -26,14 +26,14 @@ class ContestTest extends TestCase
 
     public function testNotHas()
     {
-        go(function () {
+        \Co\Run(function () {
             $this->assertFalse(Context::has('key'));
         });
     }
 
     public function testDelete()
     {
-        go(function () {
+        \Co\Run(function () {
             Context::set('key', 'value');
             $this->assertEquals('value', Context::get('key'));
             Context::delete('key');

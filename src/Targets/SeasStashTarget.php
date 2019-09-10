@@ -48,6 +48,9 @@ class SeasStashTarget extends AbstractTarget
                             $module = substr($fileName, 0, strpos($fileName, '_', -1));
                     }
                     $msg = explode($this->split, trim($msg));
+                    if (($diff = count($msg) - count($this->template)) > 0) {
+                        array_splice($msg, -($diff + 1), $diff, [array_slice($msg, -($diff + 1), $diff)]);
+                    }
                 }
                 if (!empty($this->levelList) && !in_array(strtolower($msg[$this->levelIndex]), $this->levelList)) {
                     continue;

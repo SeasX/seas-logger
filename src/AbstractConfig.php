@@ -13,6 +13,15 @@ use Swoole\Timer;
  */
 abstract class AbstractConfig
 {
+    const TYPE_JSON = 'json';
+    const TYPE_FIELD = 'field';
+    /** @var array */
+    protected static $supportField = [
+        self::TYPE_JSON,
+        self::TYPE_FIELD
+    ];
+    /** @var string */
+    protected $split = ' | ';
     /** @var int */
     protected $bufferSize = 1;
     /** @var AbstractTarget[] */
@@ -25,6 +34,10 @@ abstract class AbstractConfig
     protected $userTemplate;
     /** @var string */
     protected $appName = 'Seaslog';
+    /** @var array */
+    protected $template;
+    /** @var string */
+    protected $customerType = self::TYPE_FIELD;
 
     /**
      * AbstractConfig constructor.
@@ -33,16 +46,19 @@ abstract class AbstractConfig
      */
     public function __construct(array $target, array $configs = [])
     {
+        foreach ($configs as $name => $value) {
+            if (property_exists($this, $name) && $name !== 'targetList') {
+                $this->$name = $value;
+            }
+        }
         $this->targetList = $target;
         if (empty($this->targetList)) {
             $this->targetList = [
                 'echo' => new StyleTarget()
             ];
         }
-        foreach ($configs as $name => $value) {
-            if (property_exists($this, $name) && $name !== 'targetList') {
-                $this->$name = $value;
-            }
+        foreach ($this->targetList as $target) {
+            $target->setTemplate($this->template)->setCustomerFieldType($this->customerType)->setSplit($this->split);
         }
         register_shutdown_function(function () {
             $this->flush(true);
@@ -54,6 +70,14 @@ abstract class AbstractConfig
      * @param bool $flush
      */
     abstract public function flush(bool $flush = false): void;
+
+    /**
+     * @return array
+     */
+    public static function getSupportFieldType(): array
+    {
+        return static::$supportField;
+    }
 
     /**
      * @param callable $userTemplate

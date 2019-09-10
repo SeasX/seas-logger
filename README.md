@@ -41,8 +41,10 @@ $ composer require seasx/seas-logger
 * 日志收集建议使用`docker`目录下的`docker-compose.yaml`启动套件，用`sql`目录下的`seaslog.sql`在`Clickhouse`中创建数据库和表,`LoggerConfig`中添加`KafkaTarget`，即可在`Clickhouse`中看到日志
 * 默认带的BI套件为`Superset`，可以做一些分析
 * 生成环境建议`StyleTarget`或者`WebsocketTarget`仅输出`Warning`和`Error`日志或仅保留`KafkaTarget`，使用`SeaslogConfig`(等待最新版本发布)配置，`KafkaTarget`可以输出所有日志
-* `WebsocketTarget`由于各个框架的`Server`获取方式不一致，需要自己注册一个`getServer():?\Swoole\Server`的`function`返回`\Swoole\Server`即可，默认会往所有`Websocket`连接发送日志，如果需要过滤`fd`可以自定义`Target`。
+* `WebsocketTarget`由于各个框架的`Server`获取方式不一致，需要调用`setGetServer`注册获取`Server`的回调函数返回`\Swoole\Server`，默认会往所有`Websocket`连接发送日志，如果需要过滤`fd`可以自定义`Target`。
+* 支持自定义模板，符号为`%A`，默认在`%M`之前，可以在`registerTemplate`里面设置统一的值，同时会被日志记录方法的`Context`参数中设置`template`键值覆盖。
 * 撸码建议采用`DI`依赖注入的方式注册`Logger`
+
 
 ### 非Swoole用法
 
@@ -88,8 +90,12 @@ use Seasx\SeasLogger\Targets\StyleTarget;
                     new Broker([
                         'brokerVersion' => '1.0.0',
                     ]), new Pool([
-                    'uri' => 'kafka:9092'
-                ])), [], 'seaslog')
+                    'uri' => '192.168.5.134:9092'
+                ])),
+                [],
+                'seaslog_test',
+                [['task_id', 'string'], ['worker_id', 'string']]//自定义模板添加的处理字段，顺序需要按照日志记录中的template数组一致
+            )
         ], [
             'appName' => 'Seaslog',//应用名：远程发送日志的时候用于区分是哪个应用发送来的
             'bufferSize' => 1000,//定量：buffer>=时会输出，默认为1
@@ -128,12 +134,16 @@ use Seasx\SeasLogger\Targets\StyleTarget;
                     ]
                 ]);
             }
+            $requestVar['%A'] = ['123', '456'];//%A为自定义字段，会被log里面的template覆盖
             Context::set(Logger::CONTEXT_KEY, $requestVar);
         }
         return $requestVar;
     });
-    //这里区别于标准PSR-3，Context占用一个固定key(module)，作用与Seaslog的Logger配置一样,默认值为System
-    $logger->info("test logger", ['module' => 'logger']);
+    /*
+     * 这里区别于标准PSR-3，Context占用两个固定key(module)，作用与Seaslog的Logger参数一样,默认值为System
+     * template为用户自定义模板对应的填充值，默认为[]，不填充
+     */
+    $logger->info("test logger $i", ['module' => 'logger', 'template' => ['abc', 'def']]);
 });
 
 ```

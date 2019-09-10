@@ -29,10 +29,21 @@ class WebsocketTarget extends AbstractTarget
         self::COLOR_RANDOM,
         self::COLOR_LEVEL,
         'DarkGray',
+        self::COLOR_LEVEL,
         self::COLOR_LEVEL
     ];
     /** @var string */
     private $default = 'LightGray';
+    /** @var callable */
+    private $getServer;
+
+    /**
+     * @param callable $function
+     */
+    public function setGetServer(callable $function): void
+    {
+        $this->getServer = $function;
+    }
 
     /**
      * @param array $messages
@@ -40,9 +51,12 @@ class WebsocketTarget extends AbstractTarget
      */
     public function export(array $messages): void
     {
+        if (!is_callable($this->getServer)) {
+            return;
+        }
         /** @var Server $server */
-        $swooleServer = getServer();
-        if (!$swooleServer) {
+        $swooleServer = call_user_func($this->getServer);
+        if (!$swooleServer || !$swooleServer instanceof Server) {
             return;
         }
         foreach ($swooleServer->connections as $fd) {
@@ -67,19 +81,19 @@ class WebsocketTarget extends AbstractTarget
                         }
                         if (empty($ranColor)) {
                             $ranColor = $this->default;
-                        } elseif (is_array($ranColor) && count($ranColor) === 2) {
-                            $ranColor = $ranColor[1];
+                        } elseif (is_array($ranColor) && isset($ranColor['websocket'])) {
+                            $ranColor = $ranColor['websocket'];
                         } else {
                             $ranColor = $this->default;
                         }
-                        foreach ($msg as $index => $m) {
-                            $msg[$index] = trim($m);
+                        foreach ($msg as $index => $msgValue) {
+                            $msg[$index] = is_string($msgValue) ? trim($msgValue) : (string)$msgValue;
+                            $level = $this->getLevelColor(trim($msg[$this->levelIndex]));
                             if (isset($this->colorTemplate[$index])) {
                                 $color = $this->colorTemplate[$index];
-                                $level = trim($msg[$this->levelIndex]);
                                 switch ($color) {
                                     case self::COLOR_LEVEL:
-                                        $colors[] = HtmlColor::getColor($this->getLevelColor($level));
+                                        $colors[] = HtmlColor::getColor($level);
                                         break;
                                     case self::COLOR_RANDOM:
                                         $colors[] = HtmlColor::getColor($ranColor);
@@ -91,7 +105,7 @@ class WebsocketTarget extends AbstractTarget
                                         $colors[] = HtmlColor::getColor($color);
                                 }
                             } else {
-                                $colors[] = $this->default;
+                                $colors[] = $level;
                             }
                         }
                         $msg = json_encode([$msg, $colors], JSON_UNESCAPED_UNICODE);
@@ -112,15 +126,15 @@ class WebsocketTarget extends AbstractTarget
     {
         switch (strtolower($level)) {
             case LogLevel::INFO:
-                return "green";
+                return "Green";
             case LogLevel::DEBUG:
-                return 'dark_gray';
+                return 'DarkGray';
             case LogLevel::ERROR:
-                return "red";
+                return "Red";
             case LogLevel::WARNING:
-                return 'yellow';
+                return 'Yellow';
             default:
-                return 'light_red';
+                return 'DarkRed';
         }
     }
 

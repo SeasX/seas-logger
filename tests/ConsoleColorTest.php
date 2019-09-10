@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Seasx\SeasLogger\Tests;
 
@@ -18,7 +18,8 @@ class ConsoleColorTest extends TestCase
         $this->assertEquals('[32m[green test][0m', $color->apply('green', '[green test]'));
     }
 
-    public function testSetForceStyle(){
+    public function testSetForceStyle()
+    {
         $color = new ConsoleColor();
         $color->setForceStyle(true);
         $this->assertTrue($color->isStyleForced());

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Seasx\SeasLogger\Targets;
 
+use Seasx\SeasLogger\ArrayHelper;
+
 /**
  * Class EchoTarget
  * @package Seasx\SeasLogger\Targets
@@ -22,6 +24,7 @@ class EchoTarget extends AbstractTarget
                 if (!empty($this->levelList) && !in_array(strtolower($msg[$this->levelIndex]), $this->levelList)) {
                     continue;
                 }
+                ArrayHelper::remove($msg, '%c');
                 echo implode($this->split, $msg) . PHP_EOL;
             }
         }

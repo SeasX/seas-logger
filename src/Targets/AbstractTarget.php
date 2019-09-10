@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Seasx\SeasLogger\Targets;
 
+use Seasx\SeasLogger\AbstractConfig;
+use Seasx\SeasLogger\Exceptions\NotSupportedException;
+
 /**
  * Class AbstractTarget
  * @package Seasx\SeasLogger\Targets
@@ -15,16 +18,54 @@ abstract class AbstractTarget
     protected $levelList = [];
     /** @var int */
     protected $levelIndex = 1;
+    /** @var string */
+    protected $customerType;
+    /** @var array */
+    protected $template = [];
 
     /**
      * AbstractTarget constructor.
      * @param array $levelList
-     * @param string $split
      */
-    public function __construct(array $levelList = [], string $split = ' | ')
+    public function __construct(array $levelList = [])
+    {
+        $this->levelList = $levelList;
+    }
+
+    /**
+     * @param string $split
+     * @return AbstractTarget
+     */
+    public function setSplit(string $split): self
     {
         $this->split = $split;
-        $this->levelList = $levelList;
+        return $this;
+    }
+
+    /**
+     * @param array $template
+     * @return AbstractTarget
+     */
+    public function setTemplate(array $template): self
+    {
+        $this->template = $template;
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     * @return AbstractTarget
+     */
+    public function setCustomerFieldType(string $type): self
+    {
+        if (!in_array($type, AbstractConfig::getSupportFieldType())) {
+            throw new NotSupportedException("The field type not support $type");
+        }
+        if ($this->customerType === null) {
+            $this->customerType = $type;
+        }
+
+        return $this;
     }
 
     /**

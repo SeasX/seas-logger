@@ -3,31 +3,15 @@ declare(strict_types=1);
 
 namespace Seasx\SeasLogger\Tests;
 
-
 use Seasx\SeasLogger\AbstractConfig;
-use Seasx\SeasLogger\Exceptions\NotSupportedException;
-use Seasx\SeasLogger\Targets\AbstractTarget;
-use Seasx\SeasLogger\Targets\StyleTarget;
+use Seasx\SeasLogger\Targets\EchoTarget;
 
-class StyleTargetTest extends TestCase
+class EchoTargetTest extends TestCase
 {
-    public function testSetCustomerFieldType()
-    {
-        $target = new StyleTarget();
-        $this->assertInstanceOf(AbstractTarget::class, $target->setCustomerFieldType(AbstractConfig::TYPE_JSON));
-    }
-
-    public function testSetNotSupportCustomerFieldType()
-    {
-        $target = new StyleTarget();
-        $this->expectException(NotSupportedException::class);
-        $target->setCustomerFieldType('test');
-    }
-
     public function testStringExport()
     {
-        $target = new StyleTarget();
-        $this->assertInstanceOf(StyleTarget::class, $target);
+        $target = new EchoTarget();
+        $this->assertInstanceOf(EchoTarget::class, $target);
         $target->export([
             'logger' => [
                 implode(' | ', [
@@ -47,8 +31,8 @@ class StyleTargetTest extends TestCase
 
     public function testExport()
     {
-        $target = new StyleTarget();
-        $this->assertInstanceOf(StyleTarget::class, $target);
+        $target = new EchoTarget();
+        $this->assertInstanceOf(EchoTarget::class, $target);
         $target->export([
             'logger' => [
                 [
@@ -68,8 +52,8 @@ class StyleTargetTest extends TestCase
 
     public function testExportWithCustomerTemplate()
     {
-        $target = new StyleTarget();
-        $this->assertInstanceOf(StyleTarget::class, $target);
+        $target = new EchoTarget();
+        $this->assertInstanceOf(EchoTarget::class, $target);
         $target->export([
             'logger' => [
                 [
@@ -90,9 +74,9 @@ class StyleTargetTest extends TestCase
 
     public function testExportWithCustomerTypeJson()
     {
-        $target = new StyleTarget();
+        $target = new EchoTarget();
         $target->setCustomerFieldType(AbstractConfig::TYPE_JSON);
-        $this->assertInstanceOf(StyleTarget::class, $target);
+        $this->assertInstanceOf(EchoTarget::class, $target);
         $target->export([
             'logger' => [
                 [
@@ -113,10 +97,10 @@ class StyleTargetTest extends TestCase
 
     public function testExportWithLevel()
     {
-        $target = new StyleTarget([
+        $target = new EchoTarget([
             'info'
         ]);
-        $this->assertInstanceOf(StyleTarget::class, $target);
+        $this->assertInstanceOf(EchoTarget::class, $target);
         $target->export([
             'logger' => [
                 [

@@ -72,32 +72,32 @@ class StyleTarget extends AbstractTarget
                 }
                 if (empty($ranColor)) {
                     $ranColor = $this->default;
-                } elseif (is_array($ranColor) && count($ranColor) === 2) {
-                    $ranColor = $ranColor[0];
+                } elseif (is_array($ranColor) && isset($ranColor['console'])) {
+                    $ranColor = $ranColor['console'];
                 } else {
                     $ranColor = $this->default;
                 }
                 $context = [];
-                foreach ($msg as $index => $m) {
+                foreach ($msg as $index => $msgValue) {
+                    $level = $this->getLevelColor(trim($msg[$this->levelIndex]));
                     if (isset($this->colorTemplate[$index])) {
                         $color = $this->colorTemplate[$index];
-                        $m = is_string($m) ? trim($m) : (string)$m;
-                        $level = trim($msg[$this->levelIndex]);
+                        $msgValue = is_string($msgValue) ? trim($msgValue) : (string)$msgValue;
                         switch ($color) {
                             case self::COLOR_LEVEL:
-                                $context[] = $this->color->apply($this->getLevelColor($level), $m);
+                                $context[] = $this->color->apply($level, $msgValue);
                                 break;
                             case self::COLOR_DEFAULT:
-                                $context[] = $this->color->apply($this->default, $m);
+                                $context[] = $this->color->apply($this->default, $msgValue);
                                 break;
                             case self::COLOR_RANDOM:
-                                $context[] = $this->color->apply($ranColor, $m);
+                                $context[] = $this->color->apply($ranColor, $msgValue);
                                 break;
                             default:
-                                $context[] = $this->color->apply($color, $m);
+                                $context[] = $this->color->apply($color, $msgValue);
                         }
                     } else {
-                        $context[] = $this->color->apply($this->default, $m);
+                        $context[] = $this->color->apply($level, $msgValue);
                     }
                 }
                 if (isset($context)) {
