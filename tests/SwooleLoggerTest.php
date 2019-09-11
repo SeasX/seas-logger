@@ -39,15 +39,15 @@ class SwooleLoggerTest extends TestCase
     public function init(int $type = 0, int $bufferSize = 1)
     {
         $class = $type === 0 ? LoggerConfig::class : SeaslogConfig::class;
-        $logger = new Logger(
-            new $class([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => $bufferSize,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = new Logger();
+        $logger->setConfig(new $class([
+            'echo' => new StyleTarget()
+        ], [
+            'appName' => 'Seaslog',
+            'bufferSize' => $bufferSize,
+            'tick' => 0,
+            'recall_depth' => 2,
+        ]));
         return $logger;
     }
 
@@ -69,15 +69,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testEmergency()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->emergency('[LoggerConfig Test]', ['level' => 'emergency']);
@@ -89,15 +81,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testAlert()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->alert('[LoggerConfig Test]', ['level' => 'alert']);
@@ -109,15 +93,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testCritical()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->critical('[LoggerConfig Test]', ['level' => 'critical']);
@@ -129,15 +105,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testError()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->error('[LoggerConfig Test]', ['level' => 'error']);
@@ -149,15 +117,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testWarning()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->warning('[LoggerConfig Test]', ['level' => 'warning']);
@@ -169,15 +129,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testNotice()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->notice('[LoggerConfig Test]', ['level' => 'notice']);
@@ -189,15 +141,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testInfo()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->info('[LoggerConfig Test]', ['level' => 'info']);
@@ -209,15 +153,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testDebug()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->debug('[LoggerConfig Test]', ['level' => 'debug']);
@@ -229,15 +165,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testLog()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->log(Logger::DEBUG, '[LoggerConfig Test]', ['level' => 'log']);
@@ -300,15 +228,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testRequestLevel()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->setRequestLevel(Logger::ALL);
