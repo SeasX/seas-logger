@@ -69,169 +69,148 @@ class SwooleLoggerTest extends TestCase
 
     public function testEmergency()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->emergency('[LoggerConfig Test]', ['level' => 'emergency']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->emergency('[LoggerConfig Test]', ['level' => 'emergency']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->emergency('[SeasLog Test]', ['level' => 'emergency']);
-        });
     }
 
     public function testAlert()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->alert('[LoggerConfig Test]', ['level' => 'alert']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->alert('[LoggerConfig Test]', ['level' => 'alert']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->alert('[SeasLog Test]', ['level' => 'alert']);
-        });
     }
 
     public function testCritical()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->critical('[LoggerConfig Test]', ['level' => 'critical']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->critical('[LoggerConfig Test]', ['level' => 'critical']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->critical('[SeasLog Test]', ['level' => 'critical']);
-        });
     }
 
     public function testError()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->error('[LoggerConfig Test]', ['level' => 'error']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->error('[LoggerConfig Test]', ['level' => 'error']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->error('[SeasLog Test]', ['level' => 'error']);
-        });
     }
 
     public function testWarning()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->warning('[LoggerConfig Test]', ['level' => 'warning']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->warning('[LoggerConfig Test]', ['level' => 'warning']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->warning('[SeasLog Test]', ['level' => 'warning']);
-        });
     }
 
     public function testNotice()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->notice('[LoggerConfig Test]', ['level' => 'notice']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->notice('[LoggerConfig Test]', ['level' => 'notice']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->notice('[SeasLog Test]', ['level' => 'notice']);
-        });
     }
 
     public function testInfo()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->info('[LoggerConfig Test]', ['level' => 'info']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->info('[LoggerConfig Test]', ['level' => 'info']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->info('[SeasLog Test]', ['level' => 'info']);
-        });
     }
 
     public function testDebug()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->debug('[LoggerConfig Test]', ['level' => 'debug']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->debug('[LoggerConfig Test]', ['level' => 'debug']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->debug('[SeasLog Test]', ['level' => 'debug']);
-        });
     }
 
     public function testLog()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->log(Logger::DEBUG, '[LoggerConfig Test]', ['level' => 'log']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->log(Logger::DEBUG, '[LoggerConfig Test]', ['level' => 'log']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'log']);
-        });
     }
 
     public function testLogWithFieldTemplate()
     {
-        \Co\run(function () {
-            $logger = new Logger(
-                new LoggerConfig([
-                    'echo' => new StyleTarget()
-                ], [
-                    'appName' => 'Seaslog',
-                    'bufferSize' => 1,
-                    'tick' => 0,
-                    'recall_depth' => 2,
-                ]));
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->log(Logger::INFO, '[LoggerConfig FieldTemplate]', ['level' => 'log', 'template' => ['test']]);
+        $logger = new Logger(
+            new LoggerConfig([
+                'echo' => new StyleTarget()
+            ], [
+                'appName' => 'Seaslog',
+                'bufferSize' => 1,
+                'tick' => 0,
+                'recall_depth' => 2,
+            ]));
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->log(Logger::INFO, '[LoggerConfig FieldTemplate]', ['level' => 'log', 'template' => ['test']]);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->log(Logger::INFO, '[SeasLog FieldTemplate]', ['level' => 'log', 'template' => ['test']]);
-        });
     }
 
     public function testLogWithJsonTemplate()
     {
-        \Co\run(function () {
-            $logger = new Logger(
-                new LoggerConfig([
-                    'echo' => new StyleTarget()
-                ], [
-                    'appName' => 'Seaslog',
-                    'customerType' => AbstractConfig::TYPE_JSON,
-                    'bufferSize' => 1,
-                    'tick' => 0,
-                    'recall_depth' => 2,
-                ]));
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->log(Logger::INFO, '[LoggerConfig JsonTemplate]',
-                ['level' => 'log', 'template' => ['task_type' => 'test']]);
+        $logger = new Logger(
+            new LoggerConfig([
+                'echo' => new StyleTarget()
+            ], [
+                'appName' => 'Seaslog',
+                'customerType' => AbstractConfig::TYPE_JSON,
+                'bufferSize' => 1,
+                'tick' => 0,
+                'recall_depth' => 2,
+            ]));
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->log(Logger::INFO, '[LoggerConfig JsonTemplate]',
+            ['level' => 'log', 'template' => ['task_type' => 'test']]);
 
 //            $logger = new Logger(
 //                new SeaslogConfig([
@@ -245,26 +224,24 @@ class SwooleLoggerTest extends TestCase
 //                ]));
 //            $this->assertInstanceOf(Logger::class, $logger);
 //            $logger->log(Logger::INFO, '[SeasLog JsonTemplate]', ['level' => 'log', 'template' => ['task_type' => 'test']]);
-        });
     }
 
     public function testRequestLevel()
     {
-        \Co\run(function () {
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->setRequestLevel(Logger::ALL);
-            $logger->log(Logger::DEBUG, '[LoggerConfig Test]', ['level' => 'DEBUG']);
-            $logger->log(Logger::WARNING, '[LoggerConfig Test]', ['level' => 'WARNING']);
-            $logger->log(Logger::ERROR, '[LoggerConfig Test]', ['level' => 'ERROR']);
-            $logger->log(Logger::INFO, '[LoggerConfig Test]', ['level' => 'INFO']);
-            $logger->log(Logger::CRITICAL, '[LoggerConfig Test]', ['level' => 'CRITICAL']);
-            $logger->log(Logger::EMERGENCY, '[LoggerConfig Test]', ['level' => 'EMERGENCY']);
-            $logger->log(Logger::NOTICE, '[LoggerConfig Test]', ['level' => 'NOTICE']);
-            $logger->log(Logger::ALERT, '[LoggerConfig Test]', ['level' => 'ALERT']);
-            $logger->log(0, '[LoggerConfig Test]', ['level' => 'default']);
-            $logger->log(Logger::ALL - 1, '[LoggerConfig Test]', ['level' => 'default']);
+        $logger = $this->init();
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
+        $logger->setRequestLevel(Logger::ALL);
+        $logger->log(Logger::DEBUG, '[LoggerConfig Test]', ['level' => 'DEBUG']);
+        $logger->log(Logger::WARNING, '[LoggerConfig Test]', ['level' => 'WARNING']);
+        $logger->log(Logger::ERROR, '[LoggerConfig Test]', ['level' => 'ERROR']);
+        $logger->log(Logger::INFO, '[LoggerConfig Test]', ['level' => 'INFO']);
+        $logger->log(Logger::CRITICAL, '[LoggerConfig Test]', ['level' => 'CRITICAL']);
+        $logger->log(Logger::EMERGENCY, '[LoggerConfig Test]', ['level' => 'EMERGENCY']);
+        $logger->log(Logger::NOTICE, '[LoggerConfig Test]', ['level' => 'NOTICE']);
+        $logger->log(Logger::ALERT, '[LoggerConfig Test]', ['level' => 'ALERT']);
+        $logger->log(0, '[LoggerConfig Test]', ['level' => 'default']);
+        $logger->log(Logger::ALL - 1, '[LoggerConfig Test]', ['level' => 'default']);
 
 //            $logger = $this->init(1);
 //            $this->assertInstanceOf(Logger::class, $logger);
@@ -279,7 +256,6 @@ class SwooleLoggerTest extends TestCase
 //            $logger->log(Logger::ALERT, '[SeasLog Test]', ['level' => 'ALERT']);
 //            $logger->log(0, '[SeasLog Test]', ['level' => 'default']);
 //            $logger->log(Logger::ALL - 1, '[SeasLog Test]', ['level' => 'default']);
-        });
     }
 
     public function testSetLogger()
