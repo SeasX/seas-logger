@@ -14,9 +14,9 @@ use Psr\Log\InvalidArgumentException;
 class LoggerConfig extends AbstractConfig
 {
     /** @var array */
-    protected static $buffer = [];
+    protected $buffer = [];
     /** @var string */
-    protected static $datetime_format = "Y-m-d H:i:s";
+    protected $datetime_format = "Y-m-d H:i:s";
     /** @var array */
     private static $supportTemplate = [
         '%W',
@@ -65,19 +65,19 @@ class LoggerConfig extends AbstractConfig
     /**
      * @return string
      */
-    public static function getDatetimeFormat(): string
+    public function getDatetimeFormat(): string
     {
-        return static::$datetime_format;
+        return $this->datetime_format;
     }
 
     /**
      * @param string $format
      * @return bool
      */
-    public static function setDatetimeFormat(string $format): bool
+    public function setDatetimeFormat(string $format): bool
     {
         if (date($format, time()) !== false) {
-            static::$datetime_format = $format;
+            $this->datetime_format = $format;
             return true;
         }
         return false;
@@ -88,9 +88,9 @@ class LoggerConfig extends AbstractConfig
      *
      * @return array
      */
-    public static function getBuffer(): array
+    public function getBuffer(): array
     {
-        return static::$buffer;
+        return $this->buffer;
     }
 
     /**
@@ -101,9 +101,9 @@ class LoggerConfig extends AbstractConfig
      */
     public function log(string $level, string $message, array $context = []): void
     {
-        $template = $this->getTemplate();
+        $template = $this->getUserTemplate();
         $msg = [];
-        $module = ArrayHelper::getValue($context, 'module', 'System');
+        $module = ArrayHelper::getValue($context, 'module');
         foreach ($this->template as $tmp) {
             switch ($tmp) {
                 case '%W':
@@ -127,9 +127,9 @@ class LoggerConfig extends AbstractConfig
                         $milliseconds = 0;
                     }
                     if ($tmp === '%T') {
-                        $msg[] = date(static::$datetime_format, (int)$timestamp) . '.' . (int)$milliseconds;
+                        $msg[] = date($this->datetime_format, (int)$timestamp) . '.' . (int)$milliseconds;
                     } else {
-                        $msg[] = date(static::$datetime_format, (int)$timestamp);
+                        $msg[] = date($this->datetime_format, (int)$timestamp);
                     }
                     break;
                 case '%Q':
@@ -189,8 +189,8 @@ class LoggerConfig extends AbstractConfig
         }
         $color = ArrayHelper::getValue($template, '%c');
         $color && $msg['%c'] = $color;
-        $key = $this->appName . '_' . $module;
-        static::$buffer[$key][] = $msg;
+        $key = $this->appName . ($module ? '_' . $module : '');
+        $this->buffer[$key][] = $msg;
         $this->flush();
     }
 
@@ -200,13 +200,13 @@ class LoggerConfig extends AbstractConfig
      */
     public function flush(bool $flush = false): void
     {
-        if (!empty(static::$buffer) && $flush || ($this->bufferSize !== 0 && $this->bufferSize <= count(static::$buffer))) {
+        if (!empty($this->buffer) && $flush || ($this->bufferSize !== 0 && $this->bufferSize <= count($this->buffer))) {
             foreach ($this->targetList as $index => $target) {
                 rgo(function () use ($target, $flush) {
-                    $target->export(static::$buffer);
+                    $target->export($this->buffer);
                 });
             }
-            array_splice(static::$buffer, 0);
+            array_splice($this->buffer, 0);
         }
     }
 }

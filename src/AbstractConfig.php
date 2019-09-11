@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Seasx\SeasLogger;
 
 use Seasx\SeasLogger\targets\AbstractTarget;
-use Seasx\SeasLogger\Targets\StyleTarget;
 use Swoole\Timer;
 
 /**
@@ -52,11 +51,6 @@ abstract class AbstractConfig
             }
         }
         $this->targetList = $target;
-        if (empty($this->targetList)) {
-            $this->targetList = [
-                'echo' => new StyleTarget()
-            ];
-        }
         foreach ($this->targetList as $target) {
             $target->setTemplate($this->template)->setCustomerFieldType($this->customerType)->setSplit($this->split);
         }
@@ -67,10 +61,33 @@ abstract class AbstractConfig
     }
 
     /**
+     * @return array
+     */
+    public function getTemplate(): array
+    {
+        return $this->template;
+    }
+
+    /**
      * @param bool $flush
      */
     abstract public function flush(bool $flush = false): void;
 
+    /**
+     * @return array
+     */
+    abstract public function getBuffer(): array;
+
+    /**
+     * @return string
+     */
+    abstract public function getDatetimeFormat(): string;
+
+    /**
+     * @param string $format
+     * @return bool
+     */
+    abstract public function setDatetimeFormat(string $format): bool;
     /**
      * @return array
      */
@@ -97,7 +114,7 @@ abstract class AbstractConfig
     /**
      * @return array
      */
-    protected function getTemplate(): array
+    protected function getUserTemplate(): array
     {
         if ($this->userTemplate) {
             $template = call_user_func($this->userTemplate);

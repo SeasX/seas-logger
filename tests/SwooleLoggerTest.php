@@ -11,7 +11,7 @@ use Seasx\SeasLogger\Targets\StyleTarget;
 
 class SwooleLoggerTest extends TestCase
 {
-    public function testGetLogger()
+    public function testGetConfig()
     {
         $logger = new Logger();
         $this->assertEmpty($logger->getConfig());
@@ -23,14 +23,8 @@ class SwooleLoggerTest extends TestCase
         $this->assertInstanceOf(SeaslogConfig::class, $logger->getConfig());
     }
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
     public function testGetBasePath()
     {
-        $logger = $this->init();
-        $logger->getBasePath();
-
         $logger = $this->init(1);
         $logger->setBasePath('/tmp/seaslogger');
         $basePath = $logger->getBasePath();
@@ -39,9 +33,10 @@ class SwooleLoggerTest extends TestCase
 
     /**
      * @param int $type
+     * @param int $bufferSize
      * @return Logger
      */
-    public function init(int $type = 0)
+    public function init(int $type = 0, int $bufferSize = 1)
     {
         $class = $type === 0 ? LoggerConfig::class : SeaslogConfig::class;
         $logger = new Logger(
@@ -49,34 +44,22 @@ class SwooleLoggerTest extends TestCase
                 'echo' => new StyleTarget()
             ], [
                 'appName' => 'Seaslog',
-                'bufferSize' => 1,
+                'bufferSize' => $bufferSize,
                 'tick' => 0,
                 'recall_depth' => 2,
             ]));
         return $logger;
     }
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
     public function testSetRequestID()
     {
-        $logger = $this->init();
-        $logger::setRequestID(1024);
-
         $logger = $this->init(1);
         $result = $logger::setRequestID(1024);
         $this->assertTrue($result);
     }
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
     public function testGetRequestID()
     {
-        $logger = $this->init();
-        $logger::getRequestID();
-
         $logger = $this->init(1);
         $result = $logger::setRequestID(1024);
         $this->assertTrue($result);
@@ -299,27 +282,15 @@ class SwooleLoggerTest extends TestCase
         });
     }
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
     public function testSetLogger()
     {
-        $logger = $this->init();
-        $logger::setLogger('seas');
-
         $logger = $this->init(1);
         $result = $logger::setLogger('seas');
         $this->assertTrue($result);
     }
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
     public function testGetLastLogger()
     {
-        $logger = $this->init();
-        $logger::getLastLogger();
-
         $logger = $this->init(1);
         $result = $logger::setLogger('seas');
         $this->assertTrue($result);
@@ -329,23 +300,24 @@ class SwooleLoggerTest extends TestCase
 
     public function testSetDatetimeFormat()
     {
-        $logger = $this->init();
+        $logger = $this->init(1);
         $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
+        $this->assertTrue($result);
+    }
+
+    public function testSetConfigDatetimeFormat()
+    {
+        $logger = $this->init();
+        $result = $logger->setConfigDatetimeFormat('Y-m-d H:i:s');
         $this->assertTrue($result);
 
         $logger = $this->init(1);
-        $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
+        $result = $logger->setConfigDatetimeFormat('Y-m-d H:i:s');
         $this->assertTrue($result);
     }
 
     public function testGetDatetimeFormat()
     {
-        $logger = $this->init();
-        $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
-        $this->assertTrue($result);
-        $format = $logger::getDatetimeFormat();
-        $this->assertEquals('Y-m-d H:i:s', $format);
-
         $logger = $this->init(1);
         $result = $logger::setDatetimeFormat('Y-m-d H:i:s');
         $this->assertTrue($result);
@@ -353,27 +325,30 @@ class SwooleLoggerTest extends TestCase
         $this->assertEquals('Y-m-d H:i:s', $format);
     }
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
-    public function testAnalyzerCount()
+    public function testGetConfigDatetimeFormat()
     {
         $logger = $this->init();
-        $logger::analyzerCount();
+        $result = $logger->setConfigDatetimeFormat('Y-m-d H:i:s');
+        $this->assertTrue($result);
+        $format = $logger->getConfigDatetimeFormat();
+        $this->assertEquals('Y-m-d H:i:s', $format);
 
+        $logger = $this->init(1);
+        $result = $logger->setConfigDatetimeFormat('Y-m-d H:i:s');
+        $this->assertTrue($result);
+        $format = $logger->getConfigDatetimeFormat();
+        $this->assertEquals('Y-m-d H:i:s', $format);
+    }
+
+    public function testAnalyzerCount()
+    {
         $logger = $this->init(1);
         $result = $logger::analyzerCount();
         $this->assertNotNull($result);
     }
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
     public function testAnalyzerDetail()
     {
-        $logger = $this->init();
-        $logger::analyzerDetail();
-
         $logger = $this->init(1);
         $result = $logger::analyzerDetail();
         $this->assertNotNull($result);
@@ -381,37 +356,43 @@ class SwooleLoggerTest extends TestCase
 
     public function testGetBuffer()
     {
-        \Co\run(function (){
-            $logger = $this->init();
-            $this->assertInstanceOf(Logger::class, $logger);
-            $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
-            $logger->info('[LoggerConfig Test]', ['level' => 'info']);
-            $buffer = $logger::getBuffer();
-            $this->assertNotNull($buffer);
-
-//            $logger = $this->init(1);
-//            $this->assertInstanceOf(Logger::class, $logger);
-//            $logger->info('[SeasLog Test]', ['level' => 'info']);
-//            $buffer = $logger::getBuffer();
-//            $this->assertNotNull($buffer);
-        });
-
-
+        $logger = $this->init(1);
+        $this->assertInstanceOf(Logger::class, $logger);
+        $logger->info('[SeasLog Get Buffer]', ['level' => 'info']);
+        $buffer = $logger::getBuffer();
+        $this->assertNotNull($buffer);
     }
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
-    public function testFlushBuffer()
+    public function testGetConfigBuffer()
     {
-        $logger = $this->init();
-        $logger::flushBuffer();
+        $logger = $this->init(0, 100);
+        $this->assertInstanceOf(Logger::class, $logger);
+        $logger->info('[LoggerConfig Get Buffer]', ['level' => 'info']);
+        $buffer = $logger->getConfigBuffer();
+        $logger->flushConfigBuffer();
+        $this->assertNotNull($buffer);
 
-//        $logger = $this->init(1);
-//        $this->expectException(NotSupportedException::class);
-//        $logger::flushBuffer();
+//        $logger = $this->init(1, 100);
+//        $this->assertInstanceOf(Logger::class, $logger);
+//        $logger->info('[SeaslogConfig Get Buffer]', ['level' => 'info']);
+//        $buffer = $logger->getConfigBuffer();
+//        $this->assertNotNull($buffer);
     }
 
+    public function testFlushConfigBuffer()
+    {
+        $logger = $this->init(0, 100);
+        $this->assertInstanceOf(Logger::class, $logger);
+        $logger->info('[LoggerConfig Flush]', ['level' => 'info']);
+        $logger->flushConfigBuffer();
+        $this->assertEmpty($logger->getConfigBuffer());
+
+        $logger = $this->init(1);
+        $this->assertInstanceOf(Logger::class, $logger);
+        $logger->info('[SeaslogConfig Flush]', ['level' => 'info']);
+        $logger->flushConfigBuffer();
+        $this->assertEmpty($logger->getConfigBuffer());
+    }
 
     public function testInvoke()
     {
@@ -424,47 +405,41 @@ class SwooleLoggerTest extends TestCase
         $this->assertInstanceOf(Logger::class, $seasLogger);
     }
 
-//    public function testCloseLoggerStreamAll()
-//    {
-//        $logger = $this->init(1);
-//        $logger->setBasePath('/tmp/allLogger');
-//        $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'DEBUG']);
-//        $logger->log(Logger::WARNING, '[SeasLog Test]', ['level' => 'WARNING']);
-//        $logger->log(Logger::ERROR, '[SeasLog Test]', ['level' => 'ERROR']);
-//        $logger->log(Logger::INFO, '[SeasLog Test]', ['level' => 'INFO']);
-//        $logger->log(Logger::CRITICAL, '[SeasLog Test]', ['level' => 'CRITICAL']);
-//        $logger->log(Logger::EMERGENCY, '[SeasLog Test]', ['level' => 'EMERGENCY']);
-//        $logger->log(Logger::NOTICE, '[SeasLog Test]', ['level' => 'NOTICE']);
-//        $logger->log(Logger::ALERT, '[SeasLog Test]', ['level' => 'ALERT']);
-//
-//        $logger->log(0, '[SeasLog Test]', ['level' => 'default']);
-//        $logger->log(Logger::ALL - 1, '[SeasLog Test]', ['level' => 'default']);
-//
-//        $this->assertTrue($logger::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL));
-//    }
+    public function testCloseLoggerStreamAll()
+    {
+        $logger = $this->init(1);
+        $logger->setBasePath('/tmp/allLogger');
+        $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'DEBUG']);
+        $logger->log(Logger::WARNING, '[SeasLog Test]', ['level' => 'WARNING']);
+        $logger->log(Logger::ERROR, '[SeasLog Test]', ['level' => 'ERROR']);
+        $logger->log(Logger::INFO, '[SeasLog Test]', ['level' => 'INFO']);
+        $logger->log(Logger::CRITICAL, '[SeasLog Test]', ['level' => 'CRITICAL']);
+        $logger->log(Logger::EMERGENCY, '[SeasLog Test]', ['level' => 'EMERGENCY']);
+        $logger->log(Logger::NOTICE, '[SeasLog Test]', ['level' => 'NOTICE']);
+        $logger->log(Logger::ALERT, '[SeasLog Test]', ['level' => 'ALERT']);
 
-    /**
-     * @expectedException  \Seasx\SeasLogger\Exceptions\NotSupportedException
-     */
+        $logger->log(0, '[SeasLog Test]', ['level' => 'default']);
+        $logger->log(Logger::ALL - 1, '[SeasLog Test]', ['level' => 'default']);
+
+        $this->assertTrue($logger::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL));
+    }
+
     public function testCloseLoggerStream()
     {
-        $logger = $this->init();
-        $logger::closeLoggerStream();
+        $logger = $this->init(1);
+        $logger->setBasePath('/tmp/PandaLogger');
+        $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'DEBUG']);
+        $logger->log(Logger::WARNING, '[SeasLog Test]', ['level' => 'WARNING']);
+        $logger->log(Logger::ERROR, '[SeasLog Test]', ['level' => 'ERROR']);
+        $logger->log(Logger::INFO, '[SeasLog Test]', ['level' => 'INFO']);
+        $logger->log(Logger::CRITICAL, '[SeasLog Test]', ['level' => 'CRITICAL']);
+        $logger->log(Logger::EMERGENCY, '[SeasLog Test]', ['level' => 'EMERGENCY']);
+        $logger->log(Logger::NOTICE, '[SeasLog Test]', ['level' => 'NOTICE']);
+        $logger->log(Logger::ALERT, '[SeasLog Test]', ['level' => 'ALERT']);
 
-//        $logger = $this->init(1);
-//        $logger->setBasePath('/tmp/PandaLogger');
-//        $logger->log(Logger::DEBUG, '[SeasLog Test]', ['level' => 'DEBUG']);
-//        $logger->log(Logger::WARNING, '[SeasLog Test]', ['level' => 'WARNING']);
-//        $logger->log(Logger::ERROR, '[SeasLog Test]', ['level' => 'ERROR']);
-//        $logger->log(Logger::INFO, '[SeasLog Test]', ['level' => 'INFO']);
-//        $logger->log(Logger::CRITICAL, '[SeasLog Test]', ['level' => 'CRITICAL']);
-//        $logger->log(Logger::EMERGENCY, '[SeasLog Test]', ['level' => 'EMERGENCY']);
-//        $logger->log(Logger::NOTICE, '[SeasLog Test]', ['level' => 'NOTICE']);
-//        $logger->log(Logger::ALERT, '[SeasLog Test]', ['level' => 'ALERT']);
-//
-//        $logger->log(0, '[SeasLog Test]', ['level' => 'default']);
-//        $logger->log(Logger::ALL - 1, '[SeasLog Test]', ['level' => 'default']);
-//
-//        $this->assertTrue($logger::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, '/tmp/PandaLogger'));
+        $logger->log(0, '[SeasLog Test]', ['level' => 'default']);
+        $logger->log(Logger::ALL - 1, '[SeasLog Test]', ['level' => 'default']);
+
+        $this->assertTrue($logger::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, '/tmp/PandaLogger'));
     }
 }

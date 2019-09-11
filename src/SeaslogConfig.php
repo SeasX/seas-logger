@@ -25,6 +25,26 @@ class SeaslogConfig extends AbstractConfig
     }
 
     /**
+     * @return array
+     */
+    public function getBuffer(): array
+    {
+        $buffer = Seaslog::getBuffer();
+        return $buffer !== false ? $buffer : [];
+    }
+
+    public function getDatetimeFormat(): string
+    {
+        return SeasLog::getDatetimeFormat();
+    }
+
+    public function setDatetimeFormat(string $format): bool
+    {
+        return SeasLog::setDatetimeFormat($format);
+    }
+
+
+    /**
      * @param string $level
      * @param string $message
      * @param array $context
@@ -32,7 +52,7 @@ class SeaslogConfig extends AbstractConfig
      */
     public function log(string $level, string $message, array $context = []): void
     {
-        $template = $this->getTemplate();
+        $template = $this->getUserTemplate();
         $module = ArrayHelper::remove($context, 'module');
         if ($module !== null) {
             Seaslog::setLogger($this->appName . '_' . $module);
@@ -68,8 +88,7 @@ class SeaslogConfig extends AbstractConfig
     public function flush(bool $flush = false): void
     {
         if (method_exists('Seaslog', 'getBufferCount')) {
-            $total = Seaslog::getBufferCount();
-            if (($flush || $total >= $this->bufferSize) && ($buffer = Seaslog::getBuffer()) !== false) {
+            if (($flush || ($total = Seaslog::getBufferCount()) >= $this->bufferSize) && ($buffer = Seaslog::getBuffer()) !== false) {
                 Seaslog::flushBuffer(0);
                 foreach ($this->targetList as $index => $target) {
                     rgo(function () use ($target, $buffer, $flush) {
@@ -78,7 +97,7 @@ class SeaslogConfig extends AbstractConfig
                 }
                 unset($buffer);
             }
-        } else {
+        } elseif ($flush) {
             Seaslog::flushBuffer();
         }
     }
