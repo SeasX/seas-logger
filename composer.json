@@ -40,7 +40,8 @@
     },
     "scripts": {
         "test": [
-            "phpunit"
+            "./vendor/bin/phpunit"
         ]
     }
 }
+
