@@ -97,7 +97,7 @@ class Logger implements LoggerInterface
      * Logger constructor.
      * @param AbstractConfig|null $config
      */
-    public function __construct(?AbstractConfig $config = null)
+    public function __construct(AbstractConfig $config = null)
     {
         if ($config !== null && !extension_loaded('swoole')) {
             throw new NotSupportedException("This usage must have swoole version>=4");

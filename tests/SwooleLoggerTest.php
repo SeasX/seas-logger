@@ -177,15 +177,7 @@ class SwooleLoggerTest extends TestCase
 
     public function testLogWithFieldTemplate()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = $this->init();
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->log(Logger::INFO, '[LoggerConfig FieldTemplate]', ['level' => 'log', 'template' => ['test']]);
@@ -197,16 +189,16 @@ class SwooleLoggerTest extends TestCase
 
     public function testLogWithJsonTemplate()
     {
-        $logger = new Logger(
-            new LoggerConfig([
-                'echo' => new StyleTarget()
-            ], [
-                'appName' => 'Seaslog',
-                'customerType' => AbstractConfig::TYPE_JSON,
-                'bufferSize' => 1,
-                'tick' => 0,
-                'recall_depth' => 2,
-            ]));
+        $logger = new Logger();
+        $logger->setConfig(new LoggerConfig([
+            'echo' => new StyleTarget()
+        ], [
+            'appName' => 'Seaslog',
+            'customerType' => AbstractConfig::TYPE_JSON,
+            'bufferSize' => 1,
+            'tick' => 0,
+            'recall_depth' => 2,
+        ]));
         $this->assertInstanceOf(Logger::class, $logger);
         $this->assertInstanceOf(LoggerConfig::class, $logger->getConfig());
         $logger->log(Logger::INFO, '[LoggerConfig JsonTemplate]',
