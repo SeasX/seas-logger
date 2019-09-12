@@ -88,10 +88,10 @@ class SeaslogConfig extends AbstractConfig
     public function flush(bool $flush = false): void
     {
         if (method_exists('Seaslog', 'getBufferCount')) {
-            if (($flush || ($total = Seaslog::getBufferCount()) >= $this->bufferSize) && ($buffer = Seaslog::getBuffer()) !== false) {
+            if (($flush || Seaslog::getBufferCount() >= $this->bufferSize) && ($buffer = Seaslog::getBuffer()) !== false) {
                 Seaslog::flushBuffer(0);
                 foreach ($this->targetList as $index => $target) {
-                    rgo(function () use ($target, $buffer, $flush) {
+                    rgo(function () use ($target, $buffer) {
                         $target->export($buffer);
                     });
                 }

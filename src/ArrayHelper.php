@@ -14,7 +14,7 @@ class ArrayHelper
     /**
      * @param $array
      * @param $key
-     * @param null $default
+     * @param mixed|null $default
      * @return mixed|null
      */
     public static function getValue($array, $key, $default = null)
@@ -54,7 +54,7 @@ class ArrayHelper
     /**
      * @param $array
      * @param $key
-     * @param null $default
+     * @param mixed|null $default
      * @return mixed|null
      */
     public static function remove(&$array, $key, $default = null)

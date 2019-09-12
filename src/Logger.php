@@ -347,13 +347,7 @@ class Logger implements LoggerInterface
             $levelFunction = strtolower(self::$levels[$level]);
             SeasLog::$levelFunction($message, $context);
         } else {
-            if (is_string($message)) {
-                $this->config->log(self::$levels[$level], $message, $context);
-            } elseif (is_array($message)) {
-                foreach ($message as $m) {
-                    $this->config->log(self::$levels[$level], $m, $context);
-                }
-            }
+            $this->config->log(self::$levels[$level], $message, $context);
         }
     }
 

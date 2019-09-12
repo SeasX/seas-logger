@@ -18,7 +18,9 @@ class Context
      */
     public static function set(string $name, $value): void
     {
-        Co::getContext()[$name] = $value;
+        /** @var \ArrayObject $context */
+        $context = Co::getContext();
+        $context[$name] = $value;
     }
 
     /**
@@ -27,7 +29,9 @@ class Context
      */
     public static function get(string $name)
     {
-        return isset(Co::getContext()[$name]) ? Co::getContext()[$name] : null;
+        /** @var \ArrayObject $context */
+        $context = Co::getContext();
+        return isset($context[$name]) ? $context[$name] : null;
     }
 
     /**
@@ -36,7 +40,9 @@ class Context
      */
     public static function has(string $name): bool
     {
-        return isset(Co::getContext()[$name]);
+        /** @var \ArrayObject $context */
+        $context = Co::getContext();
+        return isset($context[$name]);
     }
 
     /**
@@ -44,6 +50,8 @@ class Context
      */
     public static function delete(string $name): void
     {
-        unset(Co::getContext()[$name]);
+        /** @var \ArrayObject $context */
+        $context = Co::getContext();
+        unset($context[$name]);
     }
 }

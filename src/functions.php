@@ -10,16 +10,21 @@ if (!function_exists('rgo')) {
      */
     function rgo(Closure $function, ?Closure $defer = null): int
     {
-        return go(function () use ($function, $defer) {
+        $cid = go(function () use ($function, $defer): int {
             try {
                 if (is_callable($defer)) {
                     defer($defer);
                 }
                 $function();
+                return 1;
             } catch (Throwable $throwable) {
                 print_r($throwable->getTraceAsString());
                 return 0;
             }
         });
+        if (is_int($cid)) {
+            return $cid;
+        }
+        return 0;
     }
 }

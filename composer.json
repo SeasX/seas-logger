@@ -17,12 +17,13 @@
     "require": {
         "php": "^7.1",
         "psr/log": "^1.0.2",
+        "wujunze/php-cli-color": "^2.4",
         "ext-seaslog": "^2.0",
         "lcobucci/clock": "^1.0",
         "friendsofphp/php-cs-fixer": "^2.11"
     },
     "require-dev": {
-        "swoft/swoole-ide-helper": "^4.3",
+        "swoole/ide-helper": "@dev",
         "phpunit/phpunit": "^6.5"
     },
     "autoload": {

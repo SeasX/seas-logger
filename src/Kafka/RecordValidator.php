@@ -12,8 +12,8 @@ use function trim;
 final class RecordValidator
 {
     /**
-     * @param string[] $record
-     * @param mixed[][] $topicList
+     * @param array $record
+     * @param array $topicList
      * @throws InvalidRecordInSet
      */
     public function validate(array $record, array $topicList): void

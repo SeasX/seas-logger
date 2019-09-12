@@ -40,10 +40,8 @@ class Produce extends Protocol
     }
 
     /**
-     * @param mixed[] $payloads
-     *
-     * @throws NotSupported
-     * @throws ProtocolException
+     * @param array $payloads
+     * @return string
      */
     public function encode(array $payloads = []): string
     {
@@ -64,9 +62,9 @@ class Produce extends Protocol
     }
 
     /**
-     * @return mixed[]
-     *
-     * @throws ProtocolException
+     * @param string $data
+     * @return array
+     * @throws \Exception
      */
     public function decode(string $data): array
     {
@@ -88,17 +86,17 @@ class Produce extends Protocol
      *
      * @param mixed[] $values
      *
-     * @throws NotSupported
-     * @throws ProtocolException
+     * @param int $compression
+     * @return string
      */
     protected function encodeProducePartition(array $values, int $compression): string
     {
         if (!isset($values['partition_id'])) {
-            throw new ProtocolException('given produce data invalid. `partition_id` is undefined.');
+            throw new InvalidArgumentException('given produce data invalid. `partition_id` is undefined.');
         }
 
         if (!isset($values['messages']) || empty($values['messages'])) {
-            throw new ProtocolException('given produce data invalid. `messages` is undefined.');
+            throw new InvalidArgumentException('given produce data invalid. `messages` is undefined.');
         }
 
         $data = self::pack(self::BIT_B32, (string)$values['partition_id']);
@@ -117,7 +115,8 @@ class Produce extends Protocol
      *
      * @param string[]|string[][] $messages
      *
-     * @throws NotSupported
+     * @param int $compression
+     * @return string
      */
     protected function encodeMessageSet(array $messages, int $compression = self::COMPRESSION_NONE): string
     {
@@ -144,7 +143,8 @@ class Produce extends Protocol
     /**
      * @param string[]|string $message
      *
-     * @throws NotSupported
+     * @param int $compression
+     * @return string
      */
     protected function encodeMessage($message, int $compression = self::COMPRESSION_NONE): string
     {
@@ -221,17 +221,17 @@ class Produce extends Protocol
      *
      * @param mixed[] $values
      *
-     * @throws NotSupported
-     * @throws ProtocolException
+     * @param int $compression
+     * @return string
      */
     protected function encodeProduceTopic(array $values, int $compression): string
     {
         if (!isset($values['topic_name'])) {
-            throw new ProtocolException('given produce data invalid. `topic_name` is undefined.');
+            throw new InvalidArgumentException('given produce data invalid. `topic_name` is undefined.');
         }
 
         if (!isset($values['partitions']) || empty($values['partitions'])) {
-            throw new ProtocolException('given produce data invalid. `partitions` is undefined.');
+            throw new InvalidArgumentException('given produce data invalid. `partitions` is undefined.');
         }
 
         $topic = self::encodeString($values['topic_name'], self::PACK_INT16);
@@ -243,9 +243,11 @@ class Produce extends Protocol
     /**
      * decode produce topic pair response
      *
+     * @param string $data
+     * @param int $version
      * @return mixed[]
      *
-     * @throws ProtocolException
+     * @throws \Exception
      */
     protected function produceTopicPair(string $data, int $version): array
     {
@@ -267,9 +269,11 @@ class Produce extends Protocol
     /**
      * decode produce partition pair response
      *
+     * @param string $data
+     * @param int $version
      * @return mixed[]
      *
-     * @throws ProtocolException
+     * @throws \Exception
      */
     protected function producePartitionPair(string $data, int $version): array
     {
@@ -278,7 +282,7 @@ class Produce extends Protocol
         $offset += 4;
         $errorCode = self::unpack(self::BIT_B16_SIGNED, substr($data, $offset, 2));
         $offset += 2;
-        $partitionOffset = self::unpack(self::BIT_B64, substr($data, $offset, 8));
+        self::unpack(self::BIT_B64, substr($data, $offset, 8));
         $offset += 8;
         $timestamp = 0;
 

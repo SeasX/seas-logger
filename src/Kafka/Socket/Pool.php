@@ -77,11 +77,8 @@ final class Pool
             if ($this->maxWait > 0 && $this->waitStack->count() > $this->maxWait) {
                 throw new Exception('Connection pool queue is full');
             }
-            $this->waitStack->push(Co::getCid());
-            if (Co::suspend() == false) {
-                $this->waitStack->pop();
-                throw new Exception('Reach max connections! Can not pending fetch!');
-            }
+            $this->waitStack->push((int)Co::getCid());
+            Co::yield();
             return $this->queue->shift();
         }
 

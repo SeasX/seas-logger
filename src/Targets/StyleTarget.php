@@ -5,7 +5,7 @@ namespace Seasx\SeasLogger\Targets;
 
 use Psr\Log\LogLevel;
 use Seasx\SeasLogger\ArrayHelper;
-use Seasx\SeasLogger\ConsoleColor;
+use Wujunze\Colors;
 
 /**
  * Class StyleTarget
@@ -16,7 +16,7 @@ class StyleTarget extends AbstractTarget
     const COLOR_RANDOM = 'random';
     const COLOR_DEFAULT = 'default';
     const COLOR_LEVEL = 'level';
-    /** @var ConsoleColor */
+    /** @var Colors */
     private $color;
     /** @var array */
     private $colorTemplate = [
@@ -30,19 +30,19 @@ class StyleTarget extends AbstractTarget
         'dark_gray',
         self::COLOR_LEVEL
     ];
-    private $default = 'none';
+    private $default = null;
     /** @var string */
     private $splitColor = 'cyan';
 
     /**
      * StyleTarget constructor.
      * @param array $levelList
-     * @param ConsoleColor|null $color
+     * @param Colors|null $color
      */
-    public function __construct(array $levelList = [], ?ConsoleColor $color = null)
+    public function __construct(array $levelList = [], ?Colors $color = null)
     {
         if ($color === null) {
-            $color = new ConsoleColor();
+            $color = new Colors();
         }
         $this->color = $color;
         $this->levelList = $levelList;
@@ -85,23 +85,24 @@ class StyleTarget extends AbstractTarget
                         $msgValue = is_string($msgValue) ? trim($msgValue) : (string)$msgValue;
                         switch ($color) {
                             case self::COLOR_LEVEL:
-                                $context[] = $this->color->apply($level, $msgValue);
+                                $context[] = $this->color->getColoredString($msgValue, $level);
                                 break;
                             case self::COLOR_DEFAULT:
-                                $context[] = $this->color->apply($this->default, $msgValue);
+                                $context[] = $this->color->getColoredString($msgValue, $this->default);
                                 break;
                             case self::COLOR_RANDOM:
-                                $context[] = $this->color->apply($ranColor, $msgValue);
+                                $context[] = $this->color->getColoredString($msgValue, $ranColor);
                                 break;
                             default:
-                                $context[] = $this->color->apply($color, $msgValue);
+                                $context[] = $this->color->getColoredString($msgValue, $color);
                         }
                     } else {
-                        $context[] = $this->color->apply($level, $msgValue);
+                        $context[] = $this->color->getColoredString($msgValue, $level);
                     }
                 }
                 if (isset($context)) {
-                    echo implode(' ' . $this->color->apply($this->splitColor, '|') . ' ', $context) . PHP_EOL;
+                    echo implode(' ' . $this->color->getColoredString('|', $this->splitColor) . ' ',
+                            $context) . PHP_EOL;
                 }
             }
         }

@@ -2,8 +2,6 @@
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-use Seasx\SeasLogger\ArrayHelper;
-use Seasx\SeasLogger\ConsoleColor;
 use Seasx\SeasLogger\Context;
 use Seasx\SeasLogger\HtmlColor;
 use Seasx\SeasLogger\Kafka\Broker;
@@ -14,8 +12,9 @@ use Seasx\SeasLogger\Logger;
 use Seasx\SeasLogger\LoggerConfig;
 use Seasx\SeasLogger\Targets\KafkaTarget;
 use Seasx\SeasLogger\Targets\StyleTarget;
+use Wujunze\Colors;
 
-\Co\Run(function () {
+rgo(function () {
     $logger = new Logger(
         new LoggerConfig([
             'echo' => new StyleTarget([
@@ -46,33 +45,16 @@ use Seasx\SeasLogger\Targets\StyleTarget;
      * 下面是示例代码，具体的设置根据自己需要
      */
     $logger->getConfig()->registerTemplate(function () {
-        $possibleStyles = (new ConsoleColor())->getPossibleStyles();
+        $possibleStyles = (new Colors())->getForegroundColors();
         $htmlColors = HtmlColor::getPossibleColors();
         if (($requestVar = Context::get(Logger::CONTEXT_KEY)) === null) {
-            /** @var Request $serverRequest */
-            if (($serverRequest = Context::get('request')) !== null) {
-                $uri = $serverRequest->getUri();
-                $requestId = $serverRequest->getAttribute(AttributeEnum::REQUESTID_ATTRIBUTE);
-                !$requestId && $requestId = uniqid();
-                $requestVar = array_filter([
-                    '%Q' => $requestId,
-                    '%R' => $uri->getPath(),
-                    '%m' => $serverRequest->getMethod(),
-                    '%I' => ArrayHelper::getValue($serverRequest->getServerParams(), 'remote_addr'),
-                    '%c' => [
-                        $possibleStyles[rand(0, count($possibleStyles) - 1)],
-                        $htmlColors[rand(0, count($htmlColors) - 1)]
-                    ],
-                ]);
-            } else {
-                $requestVar = array_filter([
-                    '%Q' => uniqid(),
-                    '%c' => [
-                        'console' => $possibleStyles[rand(0, count($possibleStyles) - 1)],
-                        'websocket' => $htmlColors[rand(0, count($htmlColors) - 1)]
-                    ]
-                ]);
-            }
+            $requestVar = array_filter([
+                '%Q' => uniqid(),
+                '%c' => [
+                    'console' => $possibleStyles[rand(0, count($possibleStyles) - 1)],
+                    'websocket' => $htmlColors[rand(0, count($htmlColors) - 1)]
+                ]
+            ]);
             $requestVar['%A'] = ['123', '456'];
             Context::set(Logger::CONTEXT_KEY, $requestVar);
         }
@@ -86,3 +68,5 @@ use Seasx\SeasLogger\Targets\StyleTarget;
         $logger->info("test logger $i", ['module' => 'logger', 'template' => ['abc', 'def']]);
     }
 });
+
+swoole_event_wait();

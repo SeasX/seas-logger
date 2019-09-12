@@ -43,14 +43,7 @@ abstract class Config
     /**
      * @var mixed[]
      */
-    private static $defaults = [
-        'clientId' => 'seaslog-kafka',
-        'brokerVersion' => '0.10.1.0',
-        'metadataBrokerList' => '',
-        'messageMaxBytes' => 1000000,
-        'metadataRequestTimeoutMs' => 60000,
-        'metadataRefreshIntervalMs' => 300000,
-        'metadataMaxAgeMs' => -1
+    protected static $defaults = [
     ];
     /**
      * @var mixed[]
@@ -89,10 +82,6 @@ abstract class Config
         if ($isGetter) {
             if (isset($this->options[$option])) {
                 return $this->options[$option];
-            }
-
-            if (isset(self::$defaults[$option])) {
-                return self::$defaults[$option];
             }
 
             if (isset(static::$defaults[$option])) {

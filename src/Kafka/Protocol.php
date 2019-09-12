@@ -272,7 +272,7 @@ abstract class Protocol
             return ['length' => $offset, 'data' => ''];
         }
 
-        $data = (string)substr($data, $offset, $packLen);
+        $data = (string)substr($data, $offset, (int)$packLen);
         $offset += $packLen;
 
         return ['length' => $offset, 'data' => self::decompress($data, $compression)];
@@ -301,7 +301,7 @@ abstract class Protocol
             // But if our system is little endian
             if (self::isSystemLittleEndian()) {
                 // We need to flip the endianess because coming from kafka it is big endian
-                $set = self::convertSignedShortFromLittleEndianToBigEndian($set);
+                $set = self::convertSignedShortFromLittleEndianToBigEndian(/** @scrutinizer ignore-type */ $set);
             }
             $result = $set;
         } else {
@@ -352,9 +352,14 @@ abstract class Protocol
     {
         // If we don't know if our system is big endian or not yet...
         if (self::$isLittleEndianSystem === null) {
-            [$endianTest] = array_values(unpack('L1L', pack('V', 1)));
+            $value = unpack('L1L', pack('V', 1));
+            if ($value === false) {
+                self::$isLittleEndianSystem = false;
+            } else {
+                [$endianTest] = array_values($value);
 
-            self::$isLittleEndianSystem = (int)$endianTest === 1;
+                self::$isLittleEndianSystem = (int)$endianTest === 1;
+            }
         }
 
         return self::$isLittleEndianSystem;

@@ -7,7 +7,7 @@ use Exception;
 use Psr\Log\LogLevel;
 use Seasx\SeasLogger\ArrayHelper;
 use Seasx\SeasLogger\HtmlColor;
-use Swoole\Server;
+use Swoole\WebSocket\Server;
 
 /**
  * Class WebsocketTarget
@@ -86,6 +86,7 @@ class WebsocketTarget extends AbstractTarget
                         } else {
                             $ranColor = $this->default;
                         }
+                        $colors = [];
                         foreach ($msg as $index => $msgValue) {
                             $msg[$index] = is_string($msgValue) ? trim($msgValue) : (string)$msgValue;
                             $level = $this->getLevelColor(trim($msg[$this->levelIndex]));

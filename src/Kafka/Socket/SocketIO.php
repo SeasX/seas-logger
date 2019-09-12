@@ -31,7 +31,7 @@ class SocketIO
         $ln = strlen($data);
         while ($data && $ln > 0) {
             $result = $this->connection->sendAll($data, $timeout);
-            if ($result === false) {
+            if (!is_int($result)) {
                 $this->reconnect();
             }
             $data = substr($data, $result);

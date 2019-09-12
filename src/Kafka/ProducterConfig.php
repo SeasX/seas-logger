@@ -27,6 +27,13 @@ class ProducterConfig extends Config
      * @var mixed[]
      */
     protected static $defaults = [
+        'clientId' => 'seaslog-kafka',
+        'brokerVersion' => '0.10.1.0',
+        'metadataBrokerList' => '',
+        'messageMaxBytes' => 1000000,
+        'metadataRequestTimeoutMs' => 60000,
+        'metadataRefreshIntervalMs' => 300000,
+        'metadataMaxAgeMs' => -1,
         'requiredAck' => 1,
         'timeout' => 5000,
         'requestTimeout' => 6000,

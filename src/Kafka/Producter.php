@@ -74,9 +74,9 @@ class Producter
                 if ($requiredAck !== 0) {
                     $connect->send($requestData);
                     $dataLen = Protocol::unpack(Protocol::BIT_B32, $connect->recv(4));
-                    $recordSet = $connect->recv($dataLen);
+                    $recordSet = $connect->recv((int)$dataLen);
                     $this->pool->release($connect);
-                    $correlationId = Protocol::unpack(Protocol::BIT_B32, substr($recordSet, 0, 4));
+                    Protocol::unpack(Protocol::BIT_B32, substr($recordSet, 0, 4));
                     $callback && $callback(ProtocolTool::decode(ProtocolTool::PRODUCE_REQUEST,
                         substr($recordSet, 4)));
                 } else {
@@ -100,8 +100,8 @@ class Producter
                     $requestData = ProtocolTool::encode(ProtocolTool::METADATA_REQUEST, $params);
                     $socket->send($requestData);
                     $dataLen = Protocol::unpack(Protocol::BIT_B32, $socket->recv(4));
-                    $data = $socket->recv($dataLen);
-                    $correlationId = Protocol::unpack(Protocol::BIT_B32, substr($data, 0, 4));
+                    $data = $socket->recv((int)$dataLen);
+                    Protocol::unpack(Protocol::BIT_B32, substr($data, 0, 4));
                     $result = ProtocolTool::decode(ProtocolTool::METADATA_REQUEST, substr($data, 4));
                     if (!isset($result['brokers'], $result['topics'])) {
                         throw new Exception('Get metadata is fail, brokers or topics is null.');

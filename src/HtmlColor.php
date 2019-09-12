@@ -9,7 +9,7 @@ namespace Seasx\SeasLogger;
  */
 class HtmlColor
 {
-    private static $colors = array(
+    protected static $colors = array(
         'AliceBlue ' => '#F0F8FF',
         'AntiqueWhite' => '#FAEBD7',
         'Aqua' => '#00FFFF',
@@ -165,7 +165,7 @@ class HtmlColor
      */
     public static function getPossibleColors(): array
     {
-        return array_keys(self::$colors);
+        return array_keys(static::$colors);
     }
 
     /**
@@ -173,6 +173,6 @@ class HtmlColor
      */
     public static function getPossibleColorsRGB(): array
     {
-        return array_values(self::$colors);
+        return array_values(static::$colors);
     }
 }

@@ -120,7 +120,7 @@ class LoggerConfig extends AbstractConfig
                     if ($this->isMicroTime > 0) {
                         $micsec = $this->isMicroTime > 3 ? 3 : $this->isMicroTime;
                         $mtimestamp = sprintf("%.{$micsec}f", microtime(true)); // 带毫秒的时间戳
-                        $timestamp = floor($mtimestamp); // 时间戳
+                        $timestamp = floor(/** @scrutinizer ignore-type */ $mtimestamp); // 时间戳
                         $milliseconds = round(($mtimestamp - $timestamp) * 1000); // 毫秒
                     } else {
                         $timestamp = time();
@@ -156,7 +156,7 @@ class LoggerConfig extends AbstractConfig
                     break;
                 case '%F':
                 case '%C':
-                    $trace = Co::getBackTrace(Co::getCid(), DEBUG_BACKTRACE_IGNORE_ARGS,
+                    $trace = Co::getBackTrace(Co::getCid(), /** @scrutinizer ignore-type */ DEBUG_BACKTRACE_IGNORE_ARGS,
                         $this->recall_depth + 2);
                     if ($tmp === '%F') {
                         $trace = $trace[$this->recall_depth];
