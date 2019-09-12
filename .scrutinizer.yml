@@ -6,7 +6,7 @@ filter:
 build:
     environment:
         php:
-            version: 5.6
+            version: 7.2
             ini:
                 'date.timezone': 'Asia/Shanghai'
     dependencies:
