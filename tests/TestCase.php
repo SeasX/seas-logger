@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace SeasX\SeasLogger\Tests;
+namespace Seasx\SeasLogger\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 

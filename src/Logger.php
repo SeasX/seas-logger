@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /*
  * This file is part of the seasx/seas-logger.
  *
@@ -13,31 +13,34 @@ namespace Seasx\SeasLogger;
 
 use Psr\Log\LoggerInterface;
 use SeasLog;
+use Seasx\SeasLogger\Exceptions\NotSupportedException;
+use function extension_loaded;
 
+/**
+ * Class Logger
+ * @package Seasx\SeasLogger
+ */
 class Logger implements LoggerInterface
 {
+    const CONTEXT_KEY = 'logger.default';
     /**
      * All level.
      */
     const ALL = -2147483647;
-
     /**
      * Detailed debug information.
      */
     const DEBUG = 100;
-
     /**
      * Interesting events.
      *
      * Examples: User logs in, SQL logs.
      */
     const INFO = 200;
-
     /**
      * Uncommon events.
      */
     const NOTICE = 250;
-
     /**
      * Exceptional occurrences that are not errors.
      *
@@ -45,19 +48,16 @@ class Logger implements LoggerInterface
      * undesirable things that are not necessarily wrong.
      */
     const WARNING = 300;
-
     /**
      * Runtime errors.
      */
     const ERROR = 400;
-
     /**
      * Critical conditions.
      *
      * Example: Application component unavailable, unexpected exception.
      */
     const CRITICAL = 500;
-
     /**
      * Action must be taken immediately.
      *
@@ -65,18 +65,14 @@ class Logger implements LoggerInterface
      * This should trigger the SMS alerts and wake you up.
      */
     const ALERT = 550;
-
     /**
      * Urgent alert.
      */
     const EMERGENCY = 600;
-
     /**
      * request Level limit.
      */
     public static $RequestLevel = self::ALL;
-
-
     /**
      * Logging levels from syslog protocol defined in RFC 5424.
      *
@@ -94,125 +90,37 @@ class Logger implements LoggerInterface
         self::ALERT => 'ALERT',
         self::EMERGENCY => 'EMERGENCY',
     ];
+    /** @var AbstractConfig */
+    protected $config;
 
     /**
-     * set request level for seaslog.
-     *
-     * @param int $level
+     * Logger constructor.
+     * @param AbstractConfig|null $config
      */
-    public function setRequestLevel($level = self::ALL)
+    public function __construct(AbstractConfig $config = null)
     {
-        self::$RequestLevel = $level;
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    public function emergency($message, array $context = [])
-    {
-        SeasLog::emergency($message, $context);
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    public function alert($message, array $context = [])
-    {
-        SeasLog::alert($message, $context);
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    public function critical($message, array $context = [])
-    {
-        SeasLog::critical($message, $context);
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    public function error($message, array $context = [])
-    {
-        SeasLog::error($message, $context);
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    public function warning($message, array $context = [])
-    {
-        SeasLog::warning($message, $context);
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    public function notice($message, array $context = [])
-    {
-        SeasLog::notice($message, $context);
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    public function info($message, array $context = [])
-    {
-        SeasLog::info($message, $context);
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     */
-    public function debug($message, array $context = [])
-    {
-        SeasLog::debug($message, $context);
-    }
-
-    /**
-     * @param mixed $level
-     * @param string $message
-     * @param array $context
-     */
-    public function log($level, $message, array $context = [])
-    {
-        if ((int)$level < self::$RequestLevel) {
-            return;
+        if ($config !== null && !extension_loaded('swoole')) {
+            throw new NotSupportedException("This usage must have swoole version>=4");
         }
-
-        if (!array_key_exists($level, self::$levels)) {
-            return;
-        }
-
-        $levelFunction = strtolower(self::$levels[$level]);
-
-        SeasLog::$levelFunction($message, $context);
+        $this->config = $config;
     }
 
     /**
-     * @param string $basePath
-     *
-     * @return bool
+     * @return AbstractConfig|null
      */
-    public function setBasePath(string $basePath)
+    public function getConfig(): ?AbstractConfig
     {
-        return SeasLog::setBasePath($basePath);
+        return $this->config;
     }
 
     /**
-     * @return string
+     * @param AbstractConfig $config
+     * @return Logger
      */
-    public function getBasePath()
+    public function setConfig(?AbstractConfig $config): self
     {
-        return SeasLog::getBasePath();
+        $this->config = $config;
+        return $this;
     }
 
     /**
@@ -272,6 +180,23 @@ class Logger implements LoggerInterface
     }
 
     /**
+     * @param string $format
+     * @return bool
+     */
+    public function setConfigDatetimeFormat(string $format): bool
+    {
+        return $this->config->setDatetimeFormat($format);
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigDatetimeFormat(): string
+    {
+        return $this->config->getDatetimeFormat();
+    }
+
+    /**
      * 返回当前DatetimeFormat配置格式.
      *
      * @return string
@@ -292,7 +217,7 @@ class Logger implements LoggerInterface
      */
     public static function analyzerCount($level = 'all', $log_path = '*', $key_word = null)
     {
-        return SeasLog::analyzerCount($level, $log_path, $key_word);
+        return SeasLog::analyzerCount($level, $log_path, (string)$key_word);
     }
 
     /**
@@ -318,7 +243,7 @@ class Logger implements LoggerInterface
         return SeasLog::analyzerDetail(
             $level,
             $log_path,
-            $key_word,
+            (string)$key_word,
             $start,
             $limit,
             $order
@@ -336,6 +261,14 @@ class Logger implements LoggerInterface
     }
 
     /**
+     * @return array
+     */
+    public function getConfigBuffer(): array
+    {
+        return $this->config->getBuffer();
+    }
+
+    /**
      * 将buffer中的日志立刻刷到硬盘.
      *
      * @return bool
@@ -343,6 +276,193 @@ class Logger implements LoggerInterface
     public static function flushBuffer()
     {
         return SeasLog::flushBuffer();
+    }
+
+    public function flushConfigBuffer(): void
+    {
+        $this->config->flush(true);
+    }
+
+    /**
+     * Manually release stream flow from logger
+     *
+     * @param $type
+     * @param string $name
+     * @return bool
+     */
+    public static function closeLoggerStream($type = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, $name = '')
+    {
+        if (empty($name)) {
+            return SeasLog::closeLoggerStream($type);
+        }
+
+        return SeasLog::closeLoggerStream($type, $name);
+
+    }
+
+    /**
+     * set request level for seaslog.
+     *
+     * @param int $level
+     */
+    public function setRequestLevel($level = self::ALL)
+    {
+        self::$RequestLevel = $level;
+    }
+
+    /**
+     * System is unusable.
+     *
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function emergency($message, array $context = array())
+    {
+        empty($this->config) ? SeasLog::emergency($message, $context) : $this->log(self::EMERGENCY, $message,
+            $context);
+    }
+
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function log($level, $message, array $context = array())
+    {
+        if ((int)$level < self::$RequestLevel) {
+            return;
+        }
+
+        if (!array_key_exists($level, self::$levels)) {
+            return;
+        }
+
+        if (empty($this->config)) {
+            $levelFunction = strtolower(self::$levels[$level]);
+            SeasLog::$levelFunction($message, $context);
+        } else {
+            $this->config->log(self::$levels[$level], $message, $context);
+        }
+    }
+
+    /**
+     * Action must be taken immediately.
+     *
+     * Example: Entire website down, database unavailable, etc. This should
+     * trigger the SMS alerts and wake you up.
+     *
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function alert($message, array $context = array())
+    {
+        empty($this->config) ? SeasLog::alert($message, $context) : $this->log(self::ALERT, $message, $context);
+    }
+
+    /**
+     * Critical conditions.
+     *
+     * Example: Application component unavailable, unexpected exception.
+     *
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function critical($message, array $context = array())
+    {
+        empty($this->config) ? SeasLog::critical($message, $context) : $this->log(self::CRITICAL, $message,
+            $context);
+    }
+
+    /**
+     * Runtime errors that do not require immediate action but should typically
+     * be logged and monitored.
+     *
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function error($message, array $context = array())
+    {
+        empty($this->config) ? SeasLog::error($message, $context) : $this->log(self::ERROR, $message, $context);
+    }
+
+    /**
+     * Exceptional occurrences that are not errors.
+     *
+     * Example: Use of deprecated APIs, poor use of an API, undesirable things
+     * that are not necessarily wrong.
+     *
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function warning($message, array $context = array())
+    {
+        empty($this->config) ? SeasLog::warning($message, $context) : $this->log(self::WARNING, $message, $context);
+    }
+
+    /**
+     * Normal but significant events.
+     *
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function notice($message, array $context = array())
+    {
+        empty($this->config) ? SeasLog::notice($message, $context) : $this->log(self::NOTICE, $message, $context);
+    }
+
+    /**
+     * Interesting events.
+     *
+     * Example: User logs in, SQL logs.
+     *
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function info($message, array $context = array())
+    {
+        empty($this->config) ? SeasLog::info($message, $context) : $this->log(self::INFO, $message, $context);
+    }
+
+    /**
+     * Detailed debug information.
+     *
+     * @param string $message
+     * @param array $context
+     *
+     * @return void
+     */
+    public function debug($message, array $context = array())
+    {
+        empty($this->config) ? SeasLog::debug($message, $context) : $this->log(self::DEBUG, $message, $context);
+    }
+
+    /**
+     * @return string
+     */
+    public function getBasePath()
+    {
+        if ($this->config instanceof LoggerConfig) {
+            throw new NotSupportedException(sprintf("LoggerConfig not support %s", __METHOD__));
+        }
+        return SeasLog::getBasePath();
     }
 
     /**
@@ -363,19 +483,15 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * Manually release stream flow from logger
+     * @param string $basePath
      *
-     * @param $type
-     * @param string $name
      * @return bool
      */
-    public static function closeLoggerStream($type = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, $name = '')
+    public function setBasePath(string $basePath)
     {
-        if (empty($name)) {
-            return SeasLog::closeLoggerStream($type);
+        if ($this->config instanceof LoggerConfig) {
+            throw new NotSupportedException(sprintf("LoggerConfig not support %s", __METHOD__));
         }
-
-        return SeasLog::closeLoggerStream($type, $name);
-
+        return SeasLog::setBasePath($basePath);
     }
 }

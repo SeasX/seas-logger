@@ -1,41 +1,48 @@
 {
-  "name": "seasx/seas-logger",
-  "description": "An effective,fast,stable log package for PHP",
-  "keywords": [
-    "log",
-    "logging",
-    "psr-3"
-  ],
-  "type": "library",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "SeasX",
-      "homepage": "https://github.com/SeasX"
+    "name": "seasx/seas-logger",
+    "description": "An effective,fast,stable log package for PHP",
+    "keywords": [
+        "log",
+        "logging",
+        "psr-3"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "SeasX",
+            "homepage": "https://github.com/SeasX"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "psr/log": "^1.0.2",
+        "wujunze/php-cli-color": "^2.4",
+        "ext-seaslog": "^2.0",
+        "lcobucci/clock": "^1.0",
+        "friendsofphp/php-cs-fixer": "^2.11"
+    },
+    "require-dev": {
+        "swoole/ide-helper": "@dev",
+        "phpunit/phpunit": "^6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Seasx\\SeasLogger\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Seasx\\SeasLogger\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "./vendor/bin/phpunit"
+        ]
     }
-  ],
-  "require": {
-    "php": "^7.0",
-    "psr/log": "^1.0.2",
-    "ext-SeasLog": "^2.0",
-    "friendsofphp/php-cs-fixer": "^2.11"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^6.5"
-  },
-  "autoload": {
-    "psr-4": {
-      "Seasx\\SeasLogger\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Seasx\\SeasLogger\\Tests\\": "tests/"
-    }
-  },
-  "scripts": {
-    "test": [
-      "./vendor/bin/phpunit"
-    ]
-  }
 }
+

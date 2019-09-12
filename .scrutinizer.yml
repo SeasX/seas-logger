@@ -1,15 +1,22 @@
 checks:
-    php:
-        code_rating: true
-        duplication: true
+    php: true
 filter:
     excluded_paths:
-        - tests/*
+        - 'tests/*'
 build:
-    tests:
-        override:
-            -
-                command: ./vendor/bin/phpunit --coverage-clover=clover.xml
-                coverage:
-                    file: clover.xml
-                    format: php-clover
+    environment:
+        php:
+            version: 7.2
+            ini:
+                'date.timezone': 'Asia/Shanghai'
+    dependencies:
+        before:
+            - pecl install swoole-4.4.5
+            - composer install
+    nodes:
+        analysis:
+            project_setup:
+                override: true
+            tests:
+                override:
+                    - php-scrutinizer-run --enable-security-analysis
